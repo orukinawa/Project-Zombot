@@ -1,0 +1,124 @@
+using UnityEngine;
+using System.Collections;
+
+class MeleeLeapBehaviourData
+{
+	public float mCoolDownLeapTimer;
+	//public float mDefaultSpeed;
+	public Vector3 mLeapTarget;
+	public bool mIsAttacking;
+	public Vector3 mTarget;
+}
+
+public class MeleeLeapBehaviour : BehaviourBase
+{
+	public float mLeapSpeed = 2;
+	public LayerMask mTargetLayer;
+	public float mCoolDownLeapDuration = 1;
+	public float mAttackReach = 3;
+	public float mAttackAngle = 45;
+	
+	float mMaxSpeed;
+	
+	public override void Init (EnemyBase enemyBase)
+	{
+		MeleeLeapBehaviourData data;
+		if(!enemyBase.mCustomData.ContainsKey(this))
+		{
+			data = new MeleeLeapBehaviourData();
+			enemyBase.mCustomData[this] = data;
+		}
+		else
+		{
+			data = (MeleeLeapBehaviourData)enemyBase.mCustomData[this];
+		}
+		data.mIsAttacking = false;
+		data.mLeapTarget = Vector3.zero;
+		data.mCoolDownLeapTimer = mCoolDownLeapDuration;
+		
+		mMaxSpeed = enemyBase.mStatEnemy.defaultMoveSpeed;
+	}
+	
+	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)
+	{
+		MeleeLeapBehaviourData data = (MeleeLeapBehaviourData)enemyBase.mCustomData[this];
+		float attackRadius = enemyBase.mAttackRadius;
+		
+		if(enemyBase.mTargetPlayer == null)
+		{
+			SearchForNewEnemy(enemyBase,attackRadius,mTargetLayer);
+		}
+		
+		Vector3 targetPos = enemyBase.mTargetPlayer.transform.position;
+		//! rotate
+		Vector3 targetDirection =  targetPos - enemyBase.transform.position;
+		//targetDirection.y = 0.0f;
+		if(!data.mIsAttacking)
+		{
+			//! Get the rotation angle
+			float targetAngle = GetAngleHelper.GetAngle(targetDirection,enemyBase.transform.forward,enemyBase.transform.up);
+			if(Mathf.Abs(targetAngle) > 3.0f)
+			{
+				//Debug.Log("rotating");
+				enemyBase.transform.Rotate(Vector3.up,targetAngle * enemyBase.mSteeringForce * Time.deltaTime, Space.Self);
+				//enemyBase.transform.rotation = Quaternion.Slerp(enemyBase.transform.rotation, Quaternion.LookRotation(targetDirection), enemyBase.mSteeringForce * Time.deltaTime);
+			}
+		}
+		
+		data.mCoolDownLeapTimer += Time.deltaTime;
+		if(data.mCoolDownLeapTimer > mCoolDownLeapDuration)
+		{
+			//! check if in view of sight to leap
+			float angle = Vector3.Angle(targetDirection,enemyBase.transform.forward);
+			if(angle < 10.0f && !data.mIsAttacking)
+			{
+				//Debug.Log("In Sight!");
+				//! off all transition and behaviours needed to perform the action without interruption
+				data.mIsAttacking = true;
+				data.mLeapTarget = targetPos;
+			}
+			
+			//! perform leap
+			if(data.mIsAttacking)
+			{
+				//! do attacking animation here
+				Vector3 leapDirection = data.mLeapTarget - enemyBase.transform.position;
+				if(leapDirection.sqrMagnitude > mAttackReach)
+				{
+					enemyBase.charController.SimpleMove(enemyBase.transform.forward * mMaxSpeed * mLeapSpeed);
+				}
+				else
+				{
+					//! check range to damage player
+					AttackInFrontRange(enemyBase.transform.position,enemyBase.transform.forward,targetDirection,mAttackAngle);
+					data.mCoolDownLeapTimer = 0.0f;
+					data.mIsAttacking = false;
+				}
+				
+				Debug.DrawRay(data.mLeapTarget,Vector3.up * 3.0f, Color.blue);
+			}
+		}
+		
+		return Vector3.zero;
+	}
+	
+	public void AttackInFrontRange(Vector3 currentPos, Vector3 dirAttack , Vector3 targetDir, float attackAngle)
+	{
+		RaycastHit hit;
+		
+		float angle = Vector3.Angle(dirAttack, targetDir);
+		
+		//Debug.Log("angle: " + angle);
+		if(angle < attackAngle)
+		{
+			if(Physics.Raycast(currentPos,targetDir,out hit,mAttackReach,mTargetLayer))
+			{
+				//! reduce target's health
+				//! use apply damage instead  NOTE FOR THE FUTURE
+				StatsCharacter stat = hit.collider.GetComponent<StatsCharacter>();
+				stat.currentHealth -= 10;
+			}
+		}
+	}
+	
+}

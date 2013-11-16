@@ -1,0 +1,119 @@
+- melee dmg should occur once - DONE
+- Set enemy Detection radius and attack range
+  default to its type - DONE
+- melee leap behaviour can damage player  - DONE
+- Target in range transition for (not in range) should work
+  without a specific range - DONE
+- target in range transition for attack range only works if
+  the object can raycast towards - DONE
+  its target and hits the player - DONE
+- implement memory system for the wall avoidance - DONE
+- create initial blocks at prefab with walls - DONE
+- implement shoot projectile - DONE
+
+Behaviour related
+- implement a spawnManager that merely spawns enemy
+  based on the prefab = Statemachine settings - DONE
+- SpawnManager went awol, seems spitter state machine is spawning too much - DONE SOLVE: ALL
+  STATEMACHINE NEED THEIR OWN RESPECTIVE TAGS	    
+- remove linkage between AINode that ray hits on environment layer obstacle - DONE
+- allow certain boundary to be empty when creating map - DONE (need more test)
+- target in range can use ratio based on the attack range and must perform raycast to see the raycast hits the target - DONE
+- action based on eyesight transition - DONE
+- Hooking behaviour - DONE
+- Plant traps - DONE
+- Trap class need inherintance if want multiple traps and effects - DONE (may need to use the pool)
+- limit seek behaviour dist between target and self, if happen to be near player don't provide the direction   information (Leap and seek cannot mix) - DONE
+- Seek limit distance needs to cater also their character controller radius so that they won FLY up! (breeder zombot case) - DONE
+- Breeder (spawn little guys of his own after death) - DONE
+- Melee leap as another state - CANCEL (just increase the character controller radius..min 0.8
+- cater priority for transition - DONE
+- Sheild behaviour
+- charging behaviour aka charger - NEED REVISION
+- create a deinit function for all behaviour so everytime when need to change state it will automatically call the
+  deinit - DONE
+
+- consider adding a new behaviour for pathfinding separate from seek - DONE(it's call pathSearch)
+- Seek behaviour need refining....cannot seek with limited distance
+- Player can go over enemy with collider radius 0.5 (the character controller step offset)
+- Enemy keep shaking rotating need to smoothen out the rotating in MeleeLeap - DONE
+- Melee leap if too near couldn't damage the player. Need to check on the problem - DONE
+- Melee leap once touch player consider attack on him - DONE
+  (0.5 attack reach is ideal for close melee, leap distance depend on attack radius)
+- avoid obstacle uses pathfinder forcefully  - DONE
+- range in stats enemy must be able to see player to be consider as track - DONE
+
+- check whether the search state and pursue state why not link together it only links based on avoid obstacle 
+(because seek will eventually hit a wall based on the player's direction) - CHECKED
+- if increase the distance between nodes, the clearance must cater for it as well...eg. 1 unit 1 2 3 clearance
+  if 2 unit apart 2 ,4, 6 - DONE
+
+- do pathsearch if enemy out of range for Lesser - DONE
+- do pathsearch if enemy out of range for Spitter
+- do pathsearch if enemy out of range for Charger
+
+- find solution on how to prevent lagging in pathfinding - DONE
+	- create bigger node size pathfinding nodes
+	(which does care about obstacle but only a floor upon creation) 
+	- if pathsearch dist > search on the bigger node size
+	- if pathsearch is nearer use the small nodes
+- follow the leader behaviour to increase efficiency
+	- check whether the pathfinding is doing A* right - DONE
+	- need to check if leader went away too far(charger case maybe) 
+	- need to check when dead assign new leader
+	- check if transition call first or behaviour - DONE (stateMgr call first)(then behaviour)
+	! WARNING not to use solutionss
+	(don get path of leader)
+	(don get the transform forward of the leader)
+	
+- charger behaviour still go through wall(ARRRRR)
+- multiple charger attacking not working
+- shooting behaviour uses enemyTargetPlayer
+- do the Ai player checking below (there)
+
+- Not in range stats for attack radius should cater also a linecast 
+- CHECK ALL BEHAVIOUR DISTANCE CHECKING LIKE LEAP NEED TO CATER FOR ITS COLLIDER SIZE
+- revamp sheild behaviour
+
+THE AI PLAYER CHECKING
+if(if any player in range)
+cache the nearest player target
+perform behaviour
+	if(nearest player> range)
+	use pathfinding
+	if(if any player in range)
+	change target and cache the nearest player target
+
+Create pseudo level generation
+- level generation with generated blocks being bigger than the initial block, will lose path
+	- solution 1: make all initial block bigger than all the variations of generated blocks
+	- solution 2: make sure the spawning will not go out of the boundary of
+	  ownBoundary + targetNeighbourBoundary
+- have to make sure that the generate block is not so close to the other neighbouring node anchors
+- allow modification of level size that changes with its node anchor - DONE
+- create more ai nodes by subsetting the BIG node between - DONE
+- use true clearance based pathfinding using Annoted A* - DONE
+- Allow node anchor entrance to have multiple sizes but must be based on odd numbers 1, 3, 5
+- create breakables based on the level given
+- start goal and end goal prefabs
+- define the goal of the game - survive and get to the end of the goal
+
+Animation
+- create animation manager
+
+- Wall avoidance need to check whether it can see the enemy,
+  if not, have to use pathfinding to track it - HOLD
+- Get shoot projectile behaviour done - AWAITING bullet
+  class to finish
+- implement seek behaviour with pathfinding - DONE(REVISE)
+- implement pathfinding movement for enemy if far away - DONE(REVISE)
+- pathfinding issue with the first node and second node to travel
+  to determine the nearest node? - (REVISE)
+
+- Build lesser zombot overall behaviour
+- Build Spitter zombot overall behaviour
+- Build charger zombot overall behaviour
+
+Feature 
+- Camera shake when hit by enemy
+- use the flee behaviour for a gameplay feature - eg. u have to push enemy into the pit of fire in order to open the next door

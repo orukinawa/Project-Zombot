@@ -1,0 +1,239 @@
+//Stuff to fix
+
+- Bullet Final //DONE
+	- Give fake bullet a mesh
+		- Like for angrybots
+	- Only normal bullet use the single raycast technique //USES COLLIDER TOO
+	- Other bullets use collider + ontriggerEnter raycast
+
+- Bullet Collision
+	- If the player is close (touching) an enemy, enemy doesn't get hit
+
+- Bouncing Bullet // FIXED - when hit, raycast to wall to get wall distance then raycastall to get targets
+	- If the next closest target is behind wall, the bullet will hit the wall and die
+		- Raycast to each target to check if there is an obstacle in between?
+		- Expensive?
+
+- Make status listen directly to tickmanager
+	- No need for status manager
+
+- Camera movement
+	- Find a way to center camera on player
+		- Regardless of position and angle
+
+- PoolManager
+	- Make it a singleton
+		- Check code for networking
+
+- Make a gun mod combiner //NEED TO IMPROVE
+
+- Find a way to show hit on enemy (decal)
+	- Check Angry Bots
+	- Decal with randomized size and rotation
+
+- Find a better way to spawn a new weapon
+	- Rework commando.cs into generic class
+
+
+- Character Movement
+	- Research about Rigidbody-child problem // CONFIRMED - CANT BE DONE
+		- If child has a rigidbody, it doesn't follow the parent transform anymore
+	- Consider making a one part character (no more base + body) // STICK WITH THIS FOR NOW
+	- Try implementing rotation without rigidbody // WORKS
+	- Cleanup Motor scripts // DONE
+	- Add cursor // DONE
+
+- Character Controller
+	- Look is there is a way to use isTrigger like with Capsule/Box Collider // NOPE
+
+- Bullets go through enemies at high speed
+	- Possible solution:
+		- Slow moving / sure hit bullets (homing, mortar) use collider
+			- Use a long collider
+		- Others (normal,piercing,bounce) use a single raycast to detect enemies
+			- In that case, make a fake trail to simulate a bullet shot
+			- Get the distance from the ray cast to determine the distance after which to kill the 'fake' shot
+
+- When game is not fullscreen, do not detect cursor position outside of window
+	- Might want to leave it in for close quarter combat
+	- See how it works for melee weapons
+
+- The mouse camera controls goes too far when cursor goes out of window
+	- Disable camera control when mouse goes out of screen?
+	- OR set mousePos to edge when cursor goes out of screen
+	- Check how Alien Swarm does it
+		- They don't allow cursor to get out of screen
+	- Polish		
+		- Vertical offset is bigger than horizontal offset to that the max distance you can aim vertical is the same as horizontal
+
+- Make bullets ignore collision with player who fired it
+	- See later for friendly fire
+
+- Character Movement
+	- Find a way to keep diagonal movement equal to vertical/horizontal while keeping Input acceleration
+
+- Cleanup shotgun spread calculations
+
+- Put a node on weapons to know where character should hold it
+
+- Lookat class
+	- Store/update exact cursor position
+	- Or make the called function update the cursor position when needed only
+
+- Fix camera and player hierachy
+	- Who should keep track of the other and move the camera
+
+- Componentize Commando class
+	- Input Manager?
+
+- Use layer for raycast and overlapsphere to improve efficiency
+
+- Enemy mesh should contain the collider and a script that links to the parent object containing the script
+
+- Check hardcoded key presses and convert to using input manager
+
+- Clean up weapon pickup code
+
+- Add color change to pickups which is the closest one
+
+- Shootarget prefab: mesh should be child of meshless object containing the script
+
+- Try Function overloading to return different data types
+
+- Camera movement following mouse gets offset the more the player move
+	- Disabled for now, fix later
+
+- Pass in the player gameObject for the pickupEffect function, the function can then access the component needed for the effect
+
+- PoolManager
+	- Make a spawn function that returns an array on Gameobjects (less iterations) // DONE
+
+	- There is a bug that occurs rarely
+	- Hacked in a fix for now
+	- Still have to find out what causes it
+	- Might happen only when clonelimit is on
+
+- Bullet update
+	- Optimize
+		- Reduce amount of Vector3.Distance called
+
+- Homing Bullet
+	- Try to implement exponential curve for homing speed //DONE
+	- Implement angle at which bullet will detect target to home to //DONE
+	- UpdateRate useless as Time.deltatime is around 0.018 on Studio XPS
+
+=================================================================================================================================================
+
+
+- Implement Character Controller // DONE
+	- Check how Character Controller works
+		- http://www.youtube.com/watch?v=DEqBzTcuEVw
+
+- Bullets	//DONE
+	- Save previous and current bullet position
+	- Raycast from previous to current
+	- From list of hits, get the one closest to the previous position
+	- Apply damage and destroy bullet
+
+- Fix RangedWeaponClass + all base and subclass //DONE
+
+
+- Make a pool manager for bullets //DONE
+
+- Ask Glenn about his pool manager // DONE
+	- Pool Manager example: http://poolmanager.path-o-logical.com/
+	- Try to implement a poolmanager that works for any kind of objects
+
+- Cleanup melee weapon code //DONE
+	- Messy and inefficient
+	- Consider switching to sphereoverlap and use angle to check if enemies are in front
+
+- Get Animation to work on melee weapon //DONE
+
+- Find a way to access animation frame so that damage can be applied at a specific animation frame //SCRAPPED
+	- A timer can be used using the animationLength variable
+
+
+//Ideas
+
+- Check Point
+	- Polygon with rigibody and clamped position x,y,z (Yay spiny!)
+
+- Bullet behaviors
+	- Homing Bullets
+	- Boomerang Bullets
+
+- Use trail renderer for melee weapon
+
+- Make an AttackBase Class and store attacks logics in Attack gameobjects.
+	- Weapons have slots for attacks (Primary,Secondary)
+	- When player calls weapons for primary/secondary, weapon calls the attack logic from the equipped attack
+
+- AlienSwarm example
+	- Smoke after bullets
+	- Exact cursor position for targeting (e.g: Grenades)
+		- Store in lookat class
+	- Check how melee weapon (chainsaw) work
+
+- Check AI pathfinder script for smooth movement,rotation
+
+- Bullet that accelerates over time
+	- http://forum.unity3d.com/threads/76470-Moving-a-RigidBody-at-a-constant-speed
+
+- Ask for stylized art style
+
+
+
+
+
+
+- Melee Weapon //SCRAPPED
+	- Use trail renderer for better effect
+	- Use impact animation on ground to give better feedback of area damaged
+	- Use different values for raycast area depending on swing animation
+
+- Janitor Mop //SCRAPPED
+	- Primary: Sweeping move damages in a cone
+	- Secondary: Piercing damages enemies in a line
+		- last enemy takes less damage?
+
+
+
+//Player Attributes
+- Health
+- Energy
+- Movespeed
+- Rotationspeed
+
+
+//Player Actions
+
+= Movement
+- Move
+- Rotate
+
+= Weapon
+- Use Primary Fire
+- Use Secondary Fire
+- Manual Reload
+
+= Inventory
+- Switch weapons
+- Use item
+- Drop/pickup weapon
+- Drop/pickup item
+
+= Skill
+- Use Skill
+
+= Others
+- Revive player
+
+
+// Weapon Swap System
+
+Make it so that it limits players to carry ONLY a primary and secondary weapon + primary weapon cannot be dropped
+
+v/s
+
+Make it so that players can carry any number of guns <- More panache as a programmer //I CHOSE YOU!

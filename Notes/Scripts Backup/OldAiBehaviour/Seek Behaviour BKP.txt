@@ -1,0 +1,108 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+class SeekBehaviourData
+{
+	public Vector3 mTarget;
+	public List<Vector3> mPath = new List<Vector3>();
+	//! reference to the player once it's detected
+	public GameObject mTargetRef;
+	//! timer to update pathfinding 
+	public float mMemoryTimer;
+}
+
+public class SeekBehaviour : BehaviourBase
+{	
+	public LayerMask mTargetLayer;
+	//! duration to update the pathfinding
+	public float mMemoryDuration = 1;
+ 	public float mMinSeekDist = 2.0f;
+	float mDetectionRange;
+	float mMinSeekDistSqr;
+	// Update is called once per frame
+	public void SetTarget(Vector3 position, EnemyBase enemyBase)
+	{
+		SeekBehaviourData data;
+		
+		if(!enemyBase.mCustomData.ContainsKey(this))
+		{
+			data = new SeekBehaviourData();
+			enemyBase.mCustomData[this] = data;
+		}
+		else
+		{
+			data =(SeekBehaviourData)enemyBase.mCustomData[this];
+		}
+		data.mTarget = position;
+		data.mMemoryTimer = mMemoryDuration;
+		data.mPath.Clear();
+		mMinSeekDistSqr = mMinSeekDist * mMinSeekDist;
+	}
+	
+	public override void Init (EnemyBase enemyBase)
+	{
+		SeekBehaviourData data;
+		if(!enemyBase.mCustomData.ContainsKey(this))
+		{
+			data = new SeekBehaviourData();
+			enemyBase.mCustomData[this] = data;
+		}
+		else
+		{
+			data =(SeekBehaviourData)enemyBase.mCustomData[this];
+		}
+		data.mMemoryTimer = mMemoryDuration;
+		data.mPath.Clear();
+		mMinSeekDistSqr = mMinSeekDist * mMinSeekDist;
+	}
+	
+	//! returns 0 if a is nearer and returns 1 if b is nearer to the point
+	public int GetNearestPos(Vector3 a, Vector3 b, Vector3 point)
+	{
+		float distanceA = 0.0f;
+		float distanceB = 0.0f;
+		distanceA = Vector3.SqrMagnitude(a - point);
+		distanceB = Vector3.SqrMagnitude(b - point);
+		
+		if(distanceA <= distanceB)
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	
+	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)
+	{
+		mDetectionRange = enemyBase.mDetectionRadius;
+		SeekBehaviourData data = (SeekBehaviourData)enemyBase.mCustomData[this];
+		
+		//! get the collider radius and sqr it
+		float radiusSqr = enemyBase.charController.radius * enemyBase.charController.radius;
+		
+		//! cache the player once saw so that target won't change immediately
+		SearchForNewEnemy(enemyBase,mDetectionRange,mTargetLayer);
+		
+		Vector3 resultDir = enemyBase.mTargetPlayer.transform.position - enemyBase.gameObject.transform.position;
+		
+		//Debug.Log("radiussqr: " + radiusSqr);
+		
+		if(resultDir.sqrMagnitude < mMinSeekDistSqr + radiusSqr)
+		{
+			float targetAngle = GetAngleHelper.GetAngle(resultDir,enemyBase.transform.forward,enemyBase.transform.up);
+			//! manual rotate
+			if(Mathf.Abs(targetAngle) > 3.0f)
+			{
+				//Debug.Log("rotating");
+				enemyBase.transform.Rotate(Vector3.up,targetAngle * enemyBase.mSteeringForce * Time.deltaTime, Space.Self);
+				//enemyBase.transform.rotation = Quaternion.Slerp(enemyBase.transform.rotation, Quaternion.LookRotation(targetDirection), enemyBase.mSteeringForce * Time.deltaTime);
+			}
+			
+			return Vector3.zero;
+		}
+		
+		return resultDir;
+	}
+}

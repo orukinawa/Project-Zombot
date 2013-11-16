@@ -1,0 +1,55 @@
+- reset the state of enemy when dead --he can be dead during attack state and attack is still true
+- as time progress, configure talent point - DONE
+- spitter to go to search behaviour - DONE
+- wave spawning - these guys must come to you - NEED more testing
+- wave spawning - focus more on lesser and spitter - DONE
+- door and key placement system - SCRAPED
+- configure all death behaviours
+	- AvoidObst - DONE
+	- BreedBeh - DONE
+	- charge - DONE
+	- cohesion? - NOTHING
+	- flee - DONE
+	- follow - DONE
+	- guard - CANCEL
+	- hook - DONE
+	- melee - DONE
+	- melee leap - DONE
+	- path search - DONE
+	- plant trap - DONE
+	- pushfromwall - DONE
+	- seek - DONE
+	- selfDestruct - DONE
+	- separate - DONE
+	- shootprojectile  - DONE
+	- wandering - DONE
+- lower down the wall - DONE
+- move the starter object closer to the wall - DONE
+- assign all death animation
+- assign all spawn animation
+- assign all EventSpawnEnemy
+- assign all EventSpawnItem 
+- assign all health for enemies
+- reduce commando movespeed
+- design the level
+-! that ghost must not be pursue state
+
+- make sure all behaviours all intact
+- create spawn animation system
+- create death animation system - done
+- if enemy get hit, track the player that hits him
+- spitter shoot projectile seems to advance everytime he shoots, check it out
+- door vs enemy - prevent the start door from closing back
+- off all gizmos
+- make sure spawner don freaking spawn so many specials
+	- charger
+	- planter
+	- smoker
+! the lagging is caused by the gizmos not your implementation!!
+
+- to add new enemy to the game
+	- add it to the enemy pool
+	- add spawnAni and deathAni prefab at enemybase(optional)
+	- add his deathAni and spawnAni to the EnemyVisualPool(optional)
+	- add it to the eventmanager with its prefab & adjust its talent point
+	- add the prefab in spawn manager

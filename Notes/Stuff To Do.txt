@@ -1,0 +1,43 @@
+Short Sem Prototype Due List
+----------------------------
+
+
+// 1 Player Class
+
+	- Commando Class
+		- Movement			//DONE
+		- Inventory			//WEAPONS ONLY DONE
+		- HP
+		- Energy
+		- Interact with Level
+			- Pickup Item / Weapon
+			- Open doors
+		- Use Object
+
+
+
+// 3 Enemy Class
+	- ??
+	- ??
+	- ??
+
+
+// 1 Level
+	- Generator
+
+
+// 3 Weapons
+	- Rifle					//DONE
+	- Shotgun				//DONE
+	- Melee Weapon (Janitor's Mop)		//DONE :D
+
+
+// 2 Pickups
+	- Weapon
+	- Energy Bar
+
+
+// 3 Interactive Environment Objects
+	- Door
+	- Destructible Object
+	- ??

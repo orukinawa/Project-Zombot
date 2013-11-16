@@ -1,0 +1,20 @@
+Scene == Prototype unity
+
+Controls
+=======
+WASD - for movement
+
+1, 2 for weapon
+E - pick up item
+G - drop weapon
+Left Click - fire weapon / melee swing
+
+EventMapper steps (if you want to make new level)
+----------------------------
+prefab name = EventMapper
+! noted the row and col is reversed (sorry my bad)
+- Define the row and col first needed in the level generator script
+- then click create map button
+- insert game object into the mBlockmap (note that all grid must be filled...no empty allow) 
+- at least 1 3x3 dead End must be at the most right to connect to other block because it acts as a start point
+- play.
