@@ -13,6 +13,7 @@ public class BehaviourManager : StateManager
 			Debug.LogError("object with null state found!");
 			return;
 		}
+		// update the current state logic
 		activeState.StateUpdate(this);
 	}
 	

@@ -15,6 +15,15 @@ abstract public class StateManager : MonoBehaviour
 		RequestState(Transition.MODE.PUSH, mStartState);
 	}
 	
+	/// <summary>
+	/// Request the state with 3 different transition mode of choice
+	/// </summary>
+	/// <param name='mode'>
+	/// Transition mode
+	/// </param>
+	/// <param name='targetState'>
+	/// Target state.
+	/// </param>
 	public void RequestState(Transition.MODE mode, State targetState)
 	{
 		//checks whether the stack is null
@@ -43,10 +52,5 @@ abstract public class StateManager : MonoBehaviour
 		//! push the state into the stack
 		targetState.StateEnter(this);
 		mStateStack.Push(targetState);
-//		foreach(KeyValuePair<object,object> pair in mCustomData)
-//		{
-//			Debug.Log("Key: " + pair.Key + " Value: " + pair.Value);
-//		}
 	}
-	
 }

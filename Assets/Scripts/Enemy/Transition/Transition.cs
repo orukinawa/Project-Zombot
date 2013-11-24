@@ -19,16 +19,6 @@ abstract public class Transition : MonoBehaviour
 		
 	}
 	
-	//! a deinit function for behaviours when a state transition switch occur
-	public virtual void DeInit(EnemyBase enemyBase)
-	{
-		BehaviourBase[] behaviourBase = GetComponents<BehaviourBase>();
-		foreach(BehaviourBase behaviour in behaviourBase)
-		{
-			behaviour.DeInit(enemyBase);
-		}
-	}
-	
 	public virtual bool VerifyTransition(StateManager context)
 	{return false;}
 }

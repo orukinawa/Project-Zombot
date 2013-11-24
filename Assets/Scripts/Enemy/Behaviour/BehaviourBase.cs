@@ -5,11 +5,23 @@ abstract public class BehaviourBase : MonoBehaviour
 {
 	public float mInfluenceWeight = 1.0f;
 	
+	/// <summary>
+	/// Initialize when entering the new state
+	/// </summary>
+	/// <param name='enemyBase'>
+	/// Enemy base.
+	/// </param>
 	public virtual void Init(EnemyBase enemyBase)
 	{
 		
 	}
 	
+	/// <summary>
+	/// Deinitialize when change new state
+	/// </summary>
+	/// <param name='enemyBase'>
+	/// Enemy base.
+	/// </param>
 	public virtual void DeInit(EnemyBase enemyBase)
 	{
 		

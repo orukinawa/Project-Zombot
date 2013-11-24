@@ -15,6 +15,12 @@ abstract public class State : MonoBehaviour
 		SortTransition(mTransitionsList);
 	}
 	
+	/// <summary>
+	/// Sorts the transition using bubble sort
+	/// </summary>
+	/// <param name='transitionList'>
+	/// Transition array.
+	/// </param>
 	public void SortTransition(Transition[] transitionList)
 	{
 		//! bubble sort
@@ -63,18 +69,12 @@ abstract public class State : MonoBehaviour
 		return gameObject.name;
 	}
 	
-//	public virtual void TransitionInit(StateManager stateManager)
-//	{
-//		foreach(Transition transition in mTransitionsList)
-//		{
-//			transition.Init(stateManager);
-//		}
-//	}
-	
 	public virtual void StateUpdate(StateManager stateManager)
 	{}
 	
 	public virtual void StateEnter(StateManager stateManager)
 	{}
 	
+	public virtual void StateExit(StateManager stateManager)
+	{}
 }

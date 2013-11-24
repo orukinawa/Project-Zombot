@@ -20,21 +20,31 @@ public class InRangeEnemyStats : Transition
 	public CONDITION mCondition;
 	public RADIUS_TYPE mRadiusType;
 	public LayerMask mLayerTarget;
+	float mDetectionRad;
+	float mAttackRad;
+	int mOtherThanAllyLayer;
 	
+	public override void Init (StateManager context)
+	{
+		if(!context.mCustomData.ContainsKey(this)){
+			mDetectionRad = context.GetComponent<EnemyBase>().mDetectionRadius;
+			mAttackRad = context.GetComponent<EnemyBase>().mAttackRadius;
+			mOtherThanAllyLayer = ~(1 << LayerMask.NameToLayer("Enemy"));
+		}
+	}
 
 	public override bool VerifyTransition (StateManager context)
 	{	
 		float detectionRadius = 0.0f;
-		float detectionRad = context.gameObject.GetComponent<EnemyBase>().mDetectionRadius;
-		float attackRad = context.gameObject.GetComponent<EnemyBase>().mAttackRadius;
+		
 		//Debug.Log("Transition disable: " + mDisable);
 		if(mRadiusType == RADIUS_TYPE.ATTACK)
 		{
-			detectionRadius = attackRad;
+			detectionRadius = mAttackRad;
 		}
 		else if(mRadiusType == RADIUS_TYPE.DETECTION)
 		{
-			detectionRadius = detectionRad;
+			detectionRadius = mDetectionRad;
 		}
 		
 		
@@ -45,17 +55,18 @@ public class InRangeEnemyStats : Transition
 		if(colliders.Length > 0)
 		{
 			RaycastHit hit;
-			int layer = ~(1 << LayerMask.NameToLayer("Enemy"));
 			if(mCondition == CONDITION.IN_RANGE)
 			{
-				//Debug.DrawLine(context.transform.position,colliders[0].transform.position,Color.yellow);
+				Debug.DrawLine(context.transform.position,colliders[0].transform.position,Color.yellow);
 				//! check if he's not block by obstacle
-				if(Physics.Linecast(context.transform.position, colliders[0].transform.position,out hit,layer))
+				if(Physics.Linecast(context.transform.position,colliders[0].transform.position,out hit,mOtherThanAllyLayer))
 				{
+					//Debug.Log("hit: " + hit.collider.name);
 					//! checks on player
 					StatsCharacter stat = hit.collider.GetComponent<StatsCharacter>();
 					if(stat)
 					{
+						//Debug.Log("hit: that is a player!!!");
 						return true;
 					}
 					return false;

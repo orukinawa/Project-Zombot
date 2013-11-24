@@ -34,6 +34,16 @@ public class BehaviourState : State
 		VerifyTransition(stateManager);
 	}
 	
+	public override void StateExit(StateManager stateManager)
+	{
+		EnemyBase enemyBase = stateManager.GetComponent<EnemyBase>();
+		BehaviourBase[] behaviourBase = GetComponents<BehaviourBase>();
+		foreach(BehaviourBase behaviour in behaviourBase)
+		{
+			behaviour.DeInit(enemyBase);
+		}
+	}
+	
 	public override void VerifyTransition (StateManager stateManager)
 	{
 		//Debug.Log("StateName: " + mStateName + " transition count: " + mTransitionsList.Length);
@@ -41,9 +51,8 @@ public class BehaviourState : State
 		{
 			if(transition.VerifyTransition(stateManager))
 			{
-				EnemyBase enemyBase = stateManager.gameObject.GetComponent<EnemyBase>();
 				//! deinit for all the behaviour
-				transition.DeInit(enemyBase);
+				StateExit(stateManager);
 				//! Do request state here
 				stateManager.RequestState(transition.mTransitionMode, transition.mTargetState);
 				return;
