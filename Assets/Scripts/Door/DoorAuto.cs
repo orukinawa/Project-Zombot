@@ -14,9 +14,9 @@ public class DoorAuto : DoorBase
 		{
 			if(mDoorState != DoorBase.DOOR_STATE.OPEN)
 			{
-				OPENING_TYPE type = GetOpeningType(other.transform);
-				OpenDoor(type);
-				mOpenType = type;
+				OPENING_TYPE doorType = GetOpeningType(other.transform);
+				OpenDoor(doorType);
+				mOpenType = doorType;
 				mDoorState = DoorBase.DOOR_STATE.OPEN;
 			}
 		}
@@ -27,7 +27,7 @@ public class DoorAuto : DoorBase
 		objectInRange.Remove(other);
 		if(objectInRange.Count <= 0 && mLockState != DoorBase.LOCK_STATE.LOCK)
 		{
-			OPENING_TYPE type = GetOpeningType(other.transform);
+			OPENING_TYPE doorType = GetOpeningType(other.transform);
 			CloseDoor(mOpenType);
 			mDoorState = DoorBase.DOOR_STATE.CLOSE;
 		}

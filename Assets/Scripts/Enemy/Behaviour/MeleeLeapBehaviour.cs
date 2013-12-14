@@ -34,6 +34,9 @@ public class MeleeLeapBehaviour : BehaviourBase
 	
 	public GameObject mClawEffect;
 	
+	// the animation names
+	public AnimationClip LeapAnimationClip;
+	
 	public override void Init (EnemyBase enemyBase)
 	{
 		MeleeLeapBehaviourData data;
@@ -111,6 +114,7 @@ public class MeleeLeapBehaviour : BehaviourBase
 				
 				if(leapDirection.sqrMagnitude > mMinDistSqr)
 				{
+					enemyBase.Animator.CrossFade(LeapAnimationClip,WrapMode.Loop);
 					enemyBase.charController.SimpleMove(enemyBase.transform.forward * enemyBase.mCurrSpeed * mLeapSpeed);
 				}
 				else
@@ -122,6 +126,7 @@ public class MeleeLeapBehaviour : BehaviourBase
 				{
 					//! if leap and miss towards the leap destination
 					data.mCoolDownLeapTimer = 0.0f;
+					//enemyBase.Animator.PlayAniCrossFade(IdleAfterLeapAnimation,WrapMode.Loop);
 				}
 				
 				//Debug.DrawRay(data.mLeapTarget,Vector3.up * 3.0f, Color.blue);

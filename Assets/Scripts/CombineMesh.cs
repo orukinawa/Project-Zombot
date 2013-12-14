@@ -15,11 +15,11 @@ public class CombineMesh : MonoBehaviour {
         while (i < meshFilters.Length) {
             combine[i].mesh = meshFilters[i].GetComponent<MeshFilter>().sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            meshFilters[i].gameObject.active = false;
+            meshFilters[i].gameObject.SetActive(false);
             i++;
         }
         transform.GetComponent<MeshFilter>().mesh = new Mesh();
         transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
-        transform.gameObject.active = true;
+        transform.gameObject.SetActive(true);
 	}
 }
