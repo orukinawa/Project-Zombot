@@ -17,6 +17,9 @@ public class WanderingBehaviour : BehaviourBase
 	public LayerMask mWallLayer;
 	float mMinDistanceSqr;
 	
+	public AnimationClip WalkAnimationClip;
+	public float WalkAnimationSpeed;
+	
 	public override void Init (EnemyBase enemyBase)
 	{
 		WanderingBehaviourData data;
@@ -64,6 +67,10 @@ public class WanderingBehaviour : BehaviourBase
 			}
 			
 			data.mPauseTimer = 0.0f;
+		}
+		else
+		{
+			enemyBase.Animator.CrossFade(WalkAnimationClip,WrapMode.Loop,WalkAnimationSpeed);
 		}
 		
 		if(rad < 1.0f)

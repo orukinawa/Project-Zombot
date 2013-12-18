@@ -4,6 +4,7 @@ using System.Collections;
 public class MeleeBehaviourData
 {
 	public float mAttackTimer;
+	public bool mAttacked = false;
 }
 
 ////! it must be below of the other class, apparent it reads require component above the class only
@@ -15,8 +16,16 @@ public class MeleeBehaviour : BehaviourBase
 	public float mAttackAngle;
 	public float mDistanceAtk;
 	public float mAtkDelay;
+	// interpolater 1 to 0
+	public float mInitAttackDelay = 0.5f;
 	
 	public GameObject mHitEffect;
+	
+	public AnimationClip MeleeAnimationClip;
+	public AnimationClip IdleAnimationClip;
+	
+	public float MeleeAnimationSpeed;
+	public float MeleeDamage = 10;
 	
 	public override void Init (EnemyBase enemyBase)
 	{
@@ -25,12 +34,16 @@ public class MeleeBehaviour : BehaviourBase
 		{
 			data = new MeleeBehaviourData();
 			enemyBase.mCustomData[this] = data;
+			
 		}
 		else
 		{
 			data =(MeleeBehaviourData)enemyBase.mCustomData[this];
 		}
-		data.mAttackTimer = mAtkDelay;
+		
+		data.mAttacked = false;
+		data.mAttackTimer = mAtkDelay * mInitAttackDelay;
+		enemyBase.Animator.IsComplete(MeleeAnimationClip,IsCompleteMelee);
 	}
 	
 	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)
@@ -49,26 +62,54 @@ public class MeleeBehaviour : BehaviourBase
 		Vector3 targetDir = player.transform.position - pos;
 		float angle = Vector3.Angle(dir, targetDir);
 		
+		float targetAngle = GetAngleHelper.GetAngle(targetDir,dir,enemyBase.transform.up);
+		//! manual rotate
+		if(Mathf.Abs(targetAngle) > 3.0f)
+		{
+			//Debug.Log("rotating");
+			//enemyBase.transform.Rotate(Vector3.up,targetAngle * enemyBase.mSteeringForce * Time.deltaTime, Space.Self);
+			targetDir.y = 0.0f;
+			enemyBase.transform.rotation = Quaternion.Slerp(enemyBase.transform.rotation, Quaternion.LookRotation(targetDir), enemyBase.mSteeringForce * Time.deltaTime);
+		}
+		
 		data.mAttackTimer += Time.deltaTime;
 		
 		if(data.mAttackTimer > mAtkDelay)
 		{
-			if(angle < mAttackAngle)
+			if(!data.mAttacked)
 			{
-				if(targetDir.sqrMagnitude < mDistanceAtk * mDistanceAtk)
+				if(angle < mAttackAngle)
 				{
-					//! do attack animation here
-					//! do weird shyt to player here
-					if(mHitEffect != null)
+					if(targetDir.sqrMagnitude < mDistanceAtk * mDistanceAtk)
 					{
-						Instantiate(mHitEffect,player.transform.position,Quaternion.identity);
+						//! do attack animation here
+						enemyBase.Animator.CrossFade(MeleeAnimationClip,WrapMode.Once,MeleeAnimationSpeed);
+						if(mHitEffect != null)
+						{
+							Instantiate(mHitEffect,player.transform.position,Quaternion.identity);
+						}
+						player.GetComponent<StatsCharacter>().currentHealth -= MeleeDamage;
+						data.mAttacked = true;
 					}
-					player.GetComponent<StatsCharacter>().currentHealth -= 10;
 				}
 			}
-			data.mAttackTimer = 0.0f;
+		}
+		else
+		{
+			enemyBase.Animator.CrossFade(IdleAnimationClip,WrapMode.Loop);
 		}
 		
 		return Vector3.zero;
+	}
+		
+	bool IsCompleteMelee(EnemyBase enemyBase)	
+	{
+		MeleeBehaviourData data = (MeleeBehaviourData)enemyBase.mCustomData[this];
+			
+		data.mAttackTimer = 0.0f;
+		data.mAttacked = false;
+		Debug.LogWarning("[MELEE] CALLBACK!!!!");
+		
+		return true;
 	}
 }

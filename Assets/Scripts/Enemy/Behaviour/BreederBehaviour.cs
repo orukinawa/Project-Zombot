@@ -24,16 +24,30 @@ public class BreederBehaviour : BehaviourBase
 		{
 			data = (BreederBehaviourData)enemyBase.mCustomData[this];
 		}
-		data.mSpawnManagerRef = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
+		
+		GameObject spawnManager = GameObject.FindGameObjectWithTag("SpawnManager");
+		
+		if(spawnManager != null)
+		{
+			data.mSpawnManagerRef = spawnManager.GetComponent<SpawnManager>();
+		}
 	}
 	
 	public override void Death (EnemyBase enemyBase)
-	{
+	{	
 		BreederBehaviourData data = (BreederBehaviourData)enemyBase.mCustomData[this];
+		// no spawn manager found
+		if(data.mSpawnManagerRef == null)
+		{
+			Debug.LogWarning("No spawn manager found for breeder behaviour, will not perform the behaviour properly!");
+			return;	
+		}
+		
 		Instantiate(mBreedEffect,enemyBase.transform.position,Quaternion.identity);
 		for(int i = 0; i < mMaxSpawn; i++)
 		{
-			data.mSpawnManagerRef.SpawnEnemy(mSpawnPrefab,enemyBase.transform.position,enemyBase.transform.rotation);
+			data.mSpawnManagerRef.SpawnEnemy(mSpawnPrefab,enemyBase.transform.position,enemyBase.transform.rotation,
+				enemyBase.mTargetPlayer, "PURSUE");
 		}
 	}
 	

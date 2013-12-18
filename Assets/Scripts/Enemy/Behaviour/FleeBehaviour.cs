@@ -11,6 +11,8 @@ public class FleeBehaviour : BehaviourBase
 	public float mFleeingRange;
 	public LayerMask mLayerName;
 	
+	public AnimationClip FleeAnimationClip;
+	
 	public override void Init (EnemyBase enemyBase)
 	{
 		if(!enemyBase.mCustomData.ContainsKey(this))
@@ -25,6 +27,8 @@ public class FleeBehaviour : BehaviourBase
 	{
 		FleeBehaviourData data = (FleeBehaviourData)enemyBase.mCustomData[this];
 		GameObject gameObj = enemyBase.gameObject;
+		
+		enemyBase.Animator.CrossFade(FleeAnimationClip,WrapMode.Loop);
 		
 		Collider[] colliders = Physics.OverlapSphere(gameObj.transform.position,mFleeingRange,mLayerName);
 		foreach(Collider collider in colliders)

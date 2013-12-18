@@ -1,0 +1,81 @@
+- wolf animation
+	- SPAWN - need a spawning animation + spawning from above + particle - DONE
+	- IDLE - done
+	- PURSUE - done
+	- ATTACK - done
+	- DEATH - create a state for a death - DONE proven can be done
+	- remember to allow search state in your real game!
+
+- spitter animation
+	- SPAWN - need a spawning animation + spawning from above + particle
+	- IDLE - DONE
+	- PURSUE - DONE
+	- ATTACK - DONE
+	- DEATH - DONE
+
+- kamikaze animation
+	- SPAWN - need a spawning animation + spawning from above + particle
+	- IDLE - DONE
+	- PURSUE - DONE
+	- ATTACK - DONE
+	- DEATH - DONE
+
+- breeder animation
+	- SPAWN - need a spawning animation + spawning from above + particle
+	- IDLE - DONE
+	- PURSUE - DONE
+	- ATTACK - DONE
+	- DEATH - DONE
+
+- hooker animation
+	- SPAWN - need a spawning animation + spawning from above + particle
+	- IDLE - DONE
+	- PURSUE - DONE
+	- ATTACK - DONE
+	- DEATH - DONE
+
+- need to check whether the EnemySpawner is spawning right with resetted values - DONE
+
+- spawn puff can be used in pool now!
+
+- check on your EventManager
+	- how it spawn - DONE
+
+- Rex requirement - DONE
+
+- increase enemy collider so that player cannot pass through - DONE
+
+- need change renderer when hit enemy - DONE
+
+- need to figure out how to spawn particle for the aggro enemy as they don start at spawn state
+  / this aggro enemy don spawn at player's block location.
+  Solution: instantiate particle for that scenario only
+
+- get NGUI done
+
+- smaller walls with offset tiled
+
+IMPORTANT
+===========
+- Spawning whole everthing
+- Enemy last hit
+- collider offset weapon z
+- intro scene
+- NGUI
+- SOUNDS
+- ghost immbolize needs trap mesh
+
+
+// todo
+- change size of enemies to fit the theme
+	- hooker - still fixing (will need to limit it) - DONE
+	- kamikaze - DONE
+	- lesser - DONE
+	- spitter - DONE
+	- breeder - DONE
+	- ghost
+- Check changing size of the level works fine - DONE
+- reduce wall size and see tile will work
+- aggro case if 1 hr cannot scarp that non aggro spawning
+- spawn particle for the ones that pursue!
+- change player size

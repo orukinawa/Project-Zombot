@@ -8,23 +8,10 @@ public class SeekBehaviour : BehaviourBase
 	float mDetectionRange;
 	float mMinSeekDistSqr;
 	
-	//! returns 0 if a is nearer and returns 1 if b is nearer to the point
-	public int GetNearestPos(Vector3 a, Vector3 b, Vector3 point)
-	{
-		float distanceA = 0.0f;
-		float distanceB = 0.0f;
-		distanceA = Vector3.SqrMagnitude(a - point);
-		distanceB = Vector3.SqrMagnitude(b - point);
-		
-		if(distanceA <= distanceB)
-		{
-			return 0;
-		}
-		else
-		{
-			return 1;
-		}
-	}
+	public AnimationClip WalkAnimation;
+	public float WalkAnimationSpd = 8.0f;
+	
+	public AnimationClip IdleAnimation;
 	
 	public override void Init (EnemyBase enemyBase)
 	{
@@ -58,7 +45,20 @@ public class SeekBehaviour : BehaviourBase
 					enemyBase.transform.rotation = Quaternion.Slerp(enemyBase.transform.rotation, Quaternion.LookRotation(resultDir), enemyBase.mSteeringForce * Time.deltaTime);
 				}
 				
+				if(IdleAnimation != null)
+				{
+					// play idle animation
+					enemyBase.Animator.CrossFade(IdleAnimation,WrapMode.Loop);
+				}
+				
 				return Vector3.zero;
+			}
+			else
+			{
+				if(WalkAnimation != null){
+					// play walk animation
+					enemyBase.Animator.CrossFade(WalkAnimation,WrapMode.Loop,WalkAnimationSpd);	
+				}
 			}
 		}		
 		return resultDir;

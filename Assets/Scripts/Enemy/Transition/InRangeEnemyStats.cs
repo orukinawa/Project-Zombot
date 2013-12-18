@@ -57,6 +57,7 @@ public class InRangeEnemyStats : Transition
 			RaycastHit hit;
 			if(mCondition == CONDITION.IN_RANGE)
 			{
+				//Debug.Log("IN range");
 				Debug.DrawLine(context.transform.position,colliders[0].transform.position,Color.yellow);
 				//! check if he's not block by obstacle
 				if(Physics.Linecast(context.transform.position,colliders[0].transform.position,out hit,mOtherThanAllyLayer))
@@ -66,6 +67,7 @@ public class InRangeEnemyStats : Transition
 					StatsCharacter stat = hit.collider.GetComponent<StatsCharacter>();
 					if(stat)
 					{
+						//Debug.Log("IN range 2");
 						//Debug.Log("hit: that is a player!!!");
 						return true;
 					}

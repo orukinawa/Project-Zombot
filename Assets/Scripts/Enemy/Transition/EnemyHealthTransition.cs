@@ -7,6 +7,7 @@ public class EnemyHealthTransition : Transition
 	{
 		ABOVE,
 		BELOW,
+		EQUAL,
 	}
 	
 	public STATUS mStatus;
@@ -31,7 +32,13 @@ public class EnemyHealthTransition : Transition
 				return true;
 			}
 		}
-		
+		else if(mStatus == STATUS.EQUAL)
+		{
+			if(currentHealth == (maxHealth * mHealthPercentage) / 100.0f)
+			{
+				return true;
+			}
+		}
 		return false;
 	}
 }

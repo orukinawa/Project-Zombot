@@ -9,23 +9,29 @@ public class EventSpawnEnemies : MonoBehaviour
 		CANCEL_SPAWN
 	}
 	
+	// the key whether this block can produce any enemy any further
 	public SPAWN_STATE mSpawnState;
+	// the maximum number of enemy can be produce by this block
 	public int mMaxSpawnNum = 1;
+	// the type of enemy prefab available to spawn
 	List<GameObject> mEnemyListPrefab = new List<GameObject>();
-
+	
+	// used by the function that spawn the non aggro enemy
 	float mSpawnTimer;
 	public float mSpawnDuration = 1.0f;
 	
 	SpawnManager mSpawnManager;
 	
+	// the list of spawn location in current block
 	List<GameObject> mSpawnLocationList = new List<GameObject>();
-	
+	// the environment layer to prevent spawning in between environmental objects like wall, props, etc
 	LayerMask mWallLayer;
 	
 	void Awake()
 	{
 		mSpawnManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
 		mWallLayer = 1 << LayerMask.NameToLayer("Environment");
+		
 		SpawnLocation[] tempSpawnList;
 		tempSpawnList = gameObject.GetComponentsInChildren<SpawnLocation>();
 		
@@ -42,11 +48,14 @@ public class EventSpawnEnemies : MonoBehaviour
 	//! update  the range of enemy to spawn
 	public void UpdatePrefabList(List<GameObject> enemyList)
 	{
-		//! if the list recently updated, don't update it again
+		// compare with the list of enemy types count with this instance enemy type list
+		// if the count is the same means it's updated
+		// if the count of the list in the parameter is higher means this instance list is outdated
 		if(enemyList.Count == mEnemyListPrefab.Count && mEnemyListPrefab.Count > 0)
 		{
 			return;
 		}
+		// update the list
 		mEnemyListPrefab = enemyList;
 	}
 	
@@ -77,7 +86,7 @@ public class EventSpawnEnemies : MonoBehaviour
 			float randX = Random.Range(min.x,max.x);
 			float randZ = Random.Range(min.z,max.z);
 		
-			pos = new Vector3(randX, 2.0f, randZ);
+			pos = new Vector3(randX, 5.0f + colliderRad, randZ);
 			if(!Physics.CheckSphere(pos,colliderRad,mWallLayer))
 			{
 				validSpawn = true;
@@ -94,7 +103,7 @@ public class EventSpawnEnemies : MonoBehaviour
 		mSpawnManager.SpawnEnemy(mEnemyListPrefab[rand],pos,Quaternion.identity,target,state);
 	}
 	
-	//! calls per frame
+	//! Spawn non aggro enemy (this function will called in an update function!)
 	public void SpawnEnemy()
 	{
 		if(mMaxSpawnNum > 0)
@@ -112,14 +121,17 @@ public class EventSpawnEnemies : MonoBehaviour
 			//! if the list is not update yet
 			if(mEnemyListPrefab.Count <= 0)return;
 			
+			// infinite counter check
 			int counter = 0;
+			// counter to tell whether the location can be spawn
 			bool validSpawn = false;
 			//! do spawn here
 			int rand = Random.Range(0, mEnemyListPrefab.Count);
 			
 			float colliderRad = mEnemyListPrefab[rand].GetComponent<CharacterController>().radius;
 			
-			//! get the spawning location
+			//! in a block there could be 1 or more gameobject with a script SpawnLocation(enemy) script attached 
+			//! get the spawning location, will randomize if have more than 2 spawning location
 			int spawnRand = Random.Range(0, mSpawnLocationList.Count);
 			Vector3 min = mSpawnLocationList[spawnRand].collider.bounds.min;
 			Vector3 max = mSpawnLocationList[spawnRand].collider.bounds.max;
@@ -129,10 +141,11 @@ public class EventSpawnEnemies : MonoBehaviour
 			//! to check whether the spawn area is applicable
 			while(!validSpawn)
 			{
+				// random the area of the block to see there is a space to spawn based on the size of the enemy
 				float randX = Random.Range(min.x,max.x);
 				float randZ = Random.Range(min.z,max.z);
-			
-				pos = new Vector3(randX, 2.0f, randZ);
+				
+				pos = new Vector3(randX, 5.0f * (colliderRad * 2), randZ);
 				if(!Physics.CheckSphere(pos,colliderRad,mWallLayer))
 				{
 					validSpawn = true;
@@ -146,6 +159,7 @@ public class EventSpawnEnemies : MonoBehaviour
 				}
 			}
 			
+			// instantiate the obj
 			mSpawnManager.SpawnEnemy(mEnemyListPrefab[rand],pos,Quaternion.identity);
 			mSpawnTimer = 0.0f;
 			mMaxSpawnNum -= 1;
