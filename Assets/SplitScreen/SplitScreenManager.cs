@@ -69,7 +69,9 @@ public class SplitScreenManager : MonoBehaviour
 	{
 		mTransform = transform;
 		mTransform.position = new Vector3(mTransform.position.x,cameraHeight,mTransform.position.z);
-		closeEnoughSqrDistance = (2*cameraDistance)*(2*cameraDistance);				
+		closeEnoughSqrDistance = (2*cameraDistance)*(2*cameraDistance);
+		playerOneTransform = GameObject.Find("Player1").transform;
+		playerTwoTransform = GameObject.Find("Player2").transform;
 	}
 	
 	void LateUpdate()

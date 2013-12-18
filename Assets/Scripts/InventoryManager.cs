@@ -9,6 +9,7 @@ public class InventoryManager : MonoBehaviour
 	public GameObject defaultWeapon;
 	GameObject equippedWeapon;
 	GunBase gunScript;
+	public GunBase GunScript{ get{ return gunScript;} }
 	public Vector3 weaponOffset;
 	public bool isFrozen = false;
 	MovementController mController;

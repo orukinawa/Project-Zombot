@@ -5,15 +5,16 @@ public class InteractiveObjectBase : MonoBehaviour
 {
 	//overlaypicture
 	public ParticleSystem particles;
+	public bool isPermanent = false;
 	
 	public void Selected(bool isOn)
 	{
 		if(isOn)
 		{
-			particles.renderer.enabled = true;
+			particles.Play();
 			return;
 		}
-		particles.renderer.enabled = false;
+		particles.Stop();
 	}
 	
 	public virtual void ApplyEffect(GameObject obj)
@@ -23,6 +24,7 @@ public class InteractiveObjectBase : MonoBehaviour
 	
 	public void SelfDestruct()
 	{
+		if(isPermanent) return;
 		Destroy(gameObject);
 	}	
 }

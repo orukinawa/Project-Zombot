@@ -4,7 +4,7 @@ using System.Collections;
 public class EffectBase : MonoBehaviour
 {
 	//Attributes
-	protected float bulletDamage = 0;
+	//protected float bulletDamage = 0;
 	
 	public float damageModifierPercent = 100.0f;
 	public float rangeModifierPercent = 100.0f;
@@ -14,11 +14,11 @@ public class EffectBase : MonoBehaviour
 	
 	public virtual void Initialize(float damage)
 	{
-		bulletDamage = damage;
+		//bulletDamage = damage;
 		//hitVisualPrefab.GetComponent<TimedScript>().poolName = "Visual Pool";
 	}
 	
-	public virtual void ApplyEffect(Collider col, GameObject bullet, Vector3 hitPos)
+	public virtual void ApplyEffect(Collider col, GameObject bullet, Vector3 hitPos, float damage)
 	{
 		
 	}

@@ -79,7 +79,7 @@ public class GunBurstFire : GunBase
 					if(bullet != null)
 					{
 						Debug.Log(bullet.name + " fired!");
-						bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,effect);
+						bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,bulletDamage,currentEffect,mStat);
 						
 						// TODO: add logic to tell bullet if pool manager was used
 						bullet = null;

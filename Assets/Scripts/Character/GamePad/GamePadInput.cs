@@ -16,7 +16,11 @@ public class GamePadInput : MonoBehaviour
 		START,
 		BACK,
 		LEFT_STICK,
-		RIGHT_STICK
+		RIGHT_STICK,
+		DPAD_UP,
+		DPAD_DOWN,
+		DPAD_LEFT,
+		DPAD_RIGHT
 	}
 	
 	public enum AxisType
@@ -34,8 +38,8 @@ public class GamePadInput : MonoBehaviour
 	
 	GamePadState mGamePadState;
 	
-    ButtonState[] currentButtonStates = new ButtonState[10];
-    ButtonState[] previousButtonStates = new ButtonState[10];
+    ButtonState[] currentButtonStates = new ButtonState[14];
+    ButtonState[] previousButtonStates = new ButtonState[14];
 	
 	float[] currentAxisValues = new float[6];
 	
@@ -65,7 +69,7 @@ public class GamePadInput : MonoBehaviour
 	
 	void _updateButtons()
 	{
-		Array.Copy(currentButtonStates,previousButtonStates,10);
+		Array.Copy(currentButtonStates,previousButtonStates,14);
 		currentButtonStates[0] = mGamePadState.Buttons.A;
 		currentButtonStates[1] = mGamePadState.Buttons.B;
 		currentButtonStates[2] = mGamePadState.Buttons.X;
@@ -76,6 +80,10 @@ public class GamePadInput : MonoBehaviour
 		currentButtonStates[7] = mGamePadState.Buttons.Back;
 		currentButtonStates[8] = mGamePadState.Buttons.LeftStick;
 		currentButtonStates[9] = mGamePadState.Buttons.RightStick;
+		currentButtonStates[10] = mGamePadState.DPad.Up;
+		currentButtonStates[11] = mGamePadState.DPad.Down;
+		currentButtonStates[12] = mGamePadState.DPad.Left;
+		currentButtonStates[13] = mGamePadState.DPad.Right;
 	}
 	
 	void _updateVibration()
@@ -152,6 +160,10 @@ public class GamePadInput : MonoBehaviour
 //		GUILayout.Label("Back: " + currentButtonStates[7]);
 //		GUILayout.Label("LS: " + currentButtonStates[8]);
 //		GUILayout.Label("RS: " + currentButtonStates[9]);
+//		GUILayout.Label("Dpad Up: " + currentButtonStates[10]);
+//		GUILayout.Label("Dpad Down: " + currentButtonStates[11]);
+//		GUILayout.Label("Dpad Left: " + currentButtonStates[12]);
+//		GUILayout.Label("Dpad Right: " + currentButtonStates[13]);
 //		GUILayout.Label("");
 //		GUILayout.Label("LeftX: " + currentAxisValues[0]);
 //		GUILayout.Label("LeftY: " + currentAxisValues[1]);

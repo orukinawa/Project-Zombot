@@ -11,12 +11,12 @@ public class EffectSlowMovement : EffectBase
 		base.Initialize(damage);
 	}
 	
-	public override void ApplyEffect(Collider col, GameObject bullet, Vector3 hitPos)
+	public override void ApplyEffect(Collider col, GameObject bullet, Vector3 hitPos, float damage)
 	{
 		SpawnHitVisual(hitPos);
 		if(col.GetComponent<StatsEnemy>() != null)
 		{
-			col.GetComponent<StatsEnemy>().ApplyDamage(-bulletDamage);			
+			col.GetComponent<StatsEnemy>().ApplyDamage(-damage);			
 		}
 		if(col.GetComponent<StatusSpeedModifier>() != null)
 		{

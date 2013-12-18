@@ -43,7 +43,7 @@ public class GunShotgun : GunBase
 				if(bullet != null)
 				{
 					// TODO: split expected damage evenly through bullets (divide by count)
-					bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,effect);
+					bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,bulletDamage,currentEffect,mStat);
 				}
 				else
 				{

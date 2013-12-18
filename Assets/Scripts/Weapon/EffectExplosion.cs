@@ -10,7 +10,7 @@ public class EffectExplosion : EffectBase
 		base.Initialize(damage);
 	}
 	
-	public override void ApplyEffect(Collider col, GameObject bullet, Vector3 hitPos)
+	public override void ApplyEffect(Collider col, GameObject bullet, Vector3 hitPos, float damage)
 	{
 		SpawnHitVisual(hitPos);
 		//visual.transform.parent = col.transform;
@@ -19,7 +19,7 @@ public class EffectExplosion : EffectBase
 			//Debug.Log("Collider: " + collider);
 			if(collider.GetComponent<StatsEnemy>() != null)
 			{
-				collider.GetComponent<StatsEnemy>().ApplyDamage(-bulletDamage);
+				collider.GetComponent<StatsEnemy>().ApplyDamage(-damage);
 				//SpawnHitVisual(collider.transform.position);
 			}
 		}		

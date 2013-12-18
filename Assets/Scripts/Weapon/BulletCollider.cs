@@ -16,9 +16,9 @@ public class BulletCollider : BulletBase
 	protected Transform mTransform;
 	protected BoxCollider mBoxCollider;
 	
-	public override void InitializeBullet (float speed, float range, GameObject effect)
+	public override void InitializeBullet (float speed, float range, float damage, EffectBase effect, StatTracker stat)
 	{
-		base.InitializeBullet (speed, range, effect);
+		base.InitializeBullet (speed, range, damage, effect, stat);
 		distanceTravelled = 0.0f;
 		mBoxCollider = GetComponent<BoxCollider>();
 		mTransform = transform;	
@@ -63,14 +63,15 @@ public class BulletCollider : BulletBase
 	
 	public virtual void _OnTriggerEnter(Collider col)
 	{
-		if(effectPrefab == null)
+		if(mEffect == null)
 		{
 			SelfDestruct();
 			return;
 		}
 		if(col.gameObject.layer == LayerMask.NameToLayer("Enemy") || col.gameObject.layer == LayerMask.NameToLayer("Environment"))
 		{			
-			effectPrefab.GetComponent<EffectBase>().ApplyEffect(col,gameObject, transform.position);
+			//effectPrefab.GetComponent<EffectBase>().ApplyEffect(col,gameObject, transform.position);
+			mEffect.ApplyEffect(col,gameObject,transform.position, bulletDamage);
 			SelfDestruct();
 		}
 	}

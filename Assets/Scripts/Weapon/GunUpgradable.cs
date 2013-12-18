@@ -5,7 +5,8 @@ using System.Collections.Generic;
 public class GunUpgradable : GunBase
 {
 	//! Number of bullets per wave
-	public int bulletCount;
+	int bulletCount;
+	public int defaultBulletCount;
 	
 	//! Angle of the spread
 	public float spread;
@@ -17,7 +18,8 @@ public class GunUpgradable : GunBase
 	Quaternion rot;
 	
 	//! Number of waves to fire
-	public int wavesToFire;
+	int wavesToFire;
+	public int defaultWavesToFire;
 	
 	//! Time interval between waves
 	public float waveBurstInterval;
@@ -44,6 +46,8 @@ public class GunUpgradable : GunBase
 	public override void Initialize ()
 	{
 		base.Initialize ();
+		bulletCount = defaultBulletCount;
+		wavesToFire = defaultWavesToFire;
 		waveBurstIntervalTimer = waveBurstInterval*2;
 		wavesFired = 0;
 		isShooting = false;
@@ -110,7 +114,7 @@ public class GunUpgradable : GunBase
 						if(bullet != null)
 						{
 							//Debug.Log(bullet.name + " fired!");
-							bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,effect);
+							bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,bulletDamage,currentEffect,mStat);
 							bullet = null;
 							// TODO: add logic to tell bullet if pool manager was used							
 						}

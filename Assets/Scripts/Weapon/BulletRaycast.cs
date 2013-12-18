@@ -12,7 +12,7 @@ public class BulletRaycast : BulletBase
 		float distance = bulletRange;
 		if(Physics.Raycast(transform.position + (transform.forward * offsetPos), transform.forward, out hit, bulletRange, ~(1 << LayerMask.NameToLayer("Player"))))
 		{
-			effectPrefab.GetComponent<EffectBase>().ApplyEffect(hit.collider,gameObject, hit.point);
+			mEffect.ApplyEffect(hit.collider,gameObject, hit.point, bulletDamage);
 			distance = Vector3.Distance(transform.position, hit.point);
 			//Debug.Log(hit.collider.name);
 		}
@@ -22,9 +22,9 @@ public class BulletRaycast : BulletBase
 		SelfDestruct();
 	}
 	
-	public override void InitializeBullet (float speed, float range, GameObject effect)
+	public override void InitializeBullet (float speed, float range, float damage, EffectBase effect, StatTracker stat)
 	{
-		base.InitializeBullet (speed, range, effect);
+		base.InitializeBullet (speed, range, damage, effect, stat);
 	}
 	
 	public override void SelfDestruct ()

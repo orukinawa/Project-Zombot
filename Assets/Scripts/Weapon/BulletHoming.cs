@@ -18,9 +18,9 @@ public class BulletHoming : BulletCollider
 //	float f = 0.0f;
 //	float l = 0.0f;
 	
-	public override void InitializeBullet (float speed, float range, GameObject effect)
+	public override void InitializeBullet (float speed, float range, float damage, EffectBase effect, StatTracker stat)
 	{
-		base.InitializeBullet (speed, range, effect);	
+		base.InitializeBullet (speed, range, damage, effect, stat);	
 		cosHalfAngle = Mathf.Cos((seekingAngle/2.0f)*Mathf.Deg2Rad);		
 		target = getClosestTarget();
 		if(target != null)

@@ -29,19 +29,19 @@ public class PlayerInputManager : MonoBehaviour
 		}
 		if(Input.GetButtonDown("Reload"))
 		{
-			invManager.ReloadWeapon();
+			//invManager.ReloadWeapon();
 		}		
 		if(Input.GetButtonDown("Use Item"))
 		{
 			//Code to use item here
 		}		
-		if(Input.GetButtonDown("Interact"))
+		if(mGamePadInput.GetButtonDown(GamePadInput.ButtonType.A))
 		{
 			interManager.Interact();
 		}		
 		if(Input.GetButtonDown("Dash"))
 		{
-			moveController.Dash();
+			//moveController.Dash();
 		}
 		
 		//DEBUG

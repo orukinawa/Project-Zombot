@@ -18,9 +18,9 @@ public class BulletMortar : BulletCollider
 	
 	//Vector3 nextPosition = Vector3.zero;
 	
-	public override void InitializeBullet (float speed, float range, GameObject effect)
+	public override void InitializeBullet (float speed, float range, float damage, EffectBase effect, StatTracker stat)
 	{
-		base.InitializeBullet (speed, range, effect);
+		base.InitializeBullet (speed, range, damage, effect, stat);
 		offsetHori = 0.0f;
 		offsetVerti = 0.0f;
 		offsetAngle = 0.0f;

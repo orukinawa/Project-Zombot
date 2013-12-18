@@ -9,9 +9,9 @@ public class BulletBouncing : BulletCollider
 	protected List<Collider> alreadyHitList = new List<Collider>();
 	int enemyLayerMask;
 	
-	public override void InitializeBullet (float speed, float range, GameObject effect)
+	public override void InitializeBullet (float speed, float range, float damage, EffectBase effect, StatTracker stat)
 	{
-		base.InitializeBullet (speed, range, effect);
+		base.InitializeBullet (speed, range, damage, effect, stat);
 		bounceCounter = 0;
 		alreadyHitList.Clear();
 		enemyLayerMask = 1 << LayerMask.NameToLayer("Enemy");
@@ -34,7 +34,7 @@ public class BulletBouncing : BulletCollider
 	
 	public override void _OnTriggerEnter (Collider col)
 	{		
-		if(effectPrefab == null)
+		if(mEffect == null)
 		{
 			SelfDestruct();
 			return;
@@ -50,7 +50,7 @@ public class BulletBouncing : BulletCollider
 					{
 						return;
 					}
-					effectPrefab.GetComponent<EffectBase>().ApplyEffect(hit.collider,gameObject, hit.point);
+					mEffect.ApplyEffect(hit.collider,gameObject, hit.point, bulletDamage);
 					++bounceCounter;
 					if(bounceCounter >= bounceAmount)
 					{

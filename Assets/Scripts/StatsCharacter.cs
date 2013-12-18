@@ -6,6 +6,8 @@ public class StatsCharacter : StatsBase
 	MovementController mMovementController;
 	public float maxEnergy;
 	float currentEnergy;
+	public GameObject hitEffectPrefab;
+	public GameObject healEffectPrefab;
 	
 	void Start ()
 	{
@@ -84,6 +86,15 @@ public class StatsCharacter : StatsBase
 		return false;
 	}
 	
+	public override void ApplyDamage (float damage, GameObject player = null)
+	{
+		base.ApplyDamage (damage, player);
+		GameObject tempObject;
+		if(damage < 0) tempObject = PoolManager.pools["Visual Pool"].Spawn(hitEffectPrefab,transform.position,transform.rotation);
+		else tempObject = PoolManager.pools["Visual Pool"].Spawn(healEffectPrefab,transform.position,transform.rotation);
+		tempObject.transform.parent = transform;
+	}
+	
 	//added for submission
 	void OnGUI()
 	{
@@ -98,8 +109,7 @@ public class StatsCharacter : StatsBase
 		GUILayout.Label("Y     - Change Gun Menu");
 		GUILayout.Label("Space - Dash");
 		GUILayout.EndVertical();
-		GUILayout.EndHorizontal();
-		
+		GUILayout.EndHorizontal();		
 	}
 	
 	public override void SelfDestruct ()

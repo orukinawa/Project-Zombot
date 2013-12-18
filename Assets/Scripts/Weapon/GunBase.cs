@@ -41,27 +41,34 @@ public class GunBase : MonoBehaviour
 	protected bool canShoot = true;
 	protected bool isReloading = false;
 	
+	public string defaultEffectModName;
+	protected string currentEffectModName;
+	protected EffectBase currentEffect;
+	
+	public StatTracker mStat;
+	
 	public virtual void Initialize()
 	{
 		currMagazineSize = maxMagazineSize;
+		SetEffectMod(defaultEffectModName);
 		
-		BulletBase mBulletBase = bulletMod.GetComponent<BulletBase>();
-		EffectBase mEffectBase = effectMod.GetComponent<EffectBase>();
+		//EffectBase mEffectBase = effectMod.GetComponent<EffectBase>();
+//		currentEffect = BulletEffectManager.Instance.getEffect(currentEffectModName);
+//		
+//		// Sets the gun attributes by combining the gun + mods
+//		bulletDamage = bulletDamageBase * (mBulletBase.damageModifierPercent/100.0f) * (currentEffect.damageModifierPercent/100.0f);
+//		bulletRange = bulletRangeBase * (mBulletBase.rangeModifierPercent/100.0f) * (currentEffect.rangeModifierPercent/100.0f);
+//		bulletSpeed = bulletSpeedBase * (mBulletBase.speedModifierPercent/100.0f) * (currentEffect.speedModifierPercent/100.0f);
 		
-		// Sets the gun attributes by combining the gun + mods
-		bulletDamage = bulletDamageBase * (mBulletBase.damageModifierPercent/100.0f) * (mEffectBase.damageModifierPercent/100.0f);
-		bulletRange = bulletRangeBase * (mBulletBase.rangeModifierPercent/100.0f) * (mEffectBase.rangeModifierPercent/100.0f);
-		bulletSpeed = bulletSpeedBase * (mBulletBase.speedModifierPercent/100.0f) * (mEffectBase.speedModifierPercent/100.0f);
-		
-		if(effect != null)
-		{
-			GameObject temp = effect;
-			effect = null;
-			Destroy(temp);
-		}		
-		effect = Instantiate(effectMod,transform.position,transform.rotation) as GameObject;
-		effect.GetComponent<EffectBase>().Initialize(bulletDamage);
-		effect.transform.parent = this.transform;		
+//		if(effect != null)
+//		{
+//			GameObject temp = effect;
+//			effect = null;
+//			Destroy(temp);
+//		}		
+		//effect = Instantiate(effectMod,transform.position,transform.rotation) as GameObject;
+		//effect.GetComponent<EffectBase>().Initialize(bulletDamage);
+		//effect.transform.parent = this.transform;		
 	}
 			
 	public virtual void Shoot()
@@ -84,7 +91,7 @@ public class GunBase : MonoBehaviour
 //				effect.transform.parent = bullet.transform;
 //				effect.transform.localPosition = Vector3.zero;
 //				effect.transform.localRotation = Quaternion.identity;
-				bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,effect);
+				bullet.GetComponent<BulletBase>().InitializeBullet(bulletSpeed,bulletRange,bulletDamage,currentEffect, mStat);
 				
 				// TODO: add logic to tell bullet if pool manager was used
 				//bullet = null;
@@ -165,6 +172,30 @@ public class GunBase : MonoBehaviour
 	public virtual bool isGunShooting()
 	{
 		return true;
+	}
+	
+	public virtual bool SetEffectMod(string effectName)
+	{
+		if(isGunShooting()) return false;
+		currentEffect = BulletEffectManager.Instance.getEffect(effectName);
+		AttributeInit();
+		return true;
+	}
+	
+	public virtual bool SetBulletMod(GameObject newBulletMod)
+	{
+		if(isGunShooting()) return false;
+		bulletMod = newBulletMod;
+		AttributeInit();
+		return true;
+	}
+	
+	protected void AttributeInit()
+	{
+		BulletBase mBulletBase = bulletMod.GetComponent<BulletBase>();
+		bulletDamage = bulletDamageBase * (mBulletBase.damageModifierPercent/100.0f) * (currentEffect.damageModifierPercent/100.0f);
+		bulletRange = bulletRangeBase * (mBulletBase.rangeModifierPercent/100.0f) * (currentEffect.rangeModifierPercent/100.0f);
+		bulletSpeed = bulletSpeedBase * (mBulletBase.speedModifierPercent/100.0f) * (currentEffect.speedModifierPercent/100.0f);
 	}
 	
 	void OnGUI()
