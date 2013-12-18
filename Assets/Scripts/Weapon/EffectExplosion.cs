@@ -16,11 +16,11 @@ public class EffectExplosion : EffectBase
 		//visual.transform.parent = col.transform;
 		foreach(Collider collider in Physics.OverlapSphere(col.transform.position, explosionRadius))
 		{
-			Debug.Log("Collider: " + collider);
+			//Debug.Log("Collider: " + collider);
 			if(collider.GetComponent<StatsEnemy>() != null)
 			{
 				collider.GetComponent<StatsEnemy>().ApplyDamage(-bulletDamage);
-				SpawnHitVisual(collider.transform.position);
+				//SpawnHitVisual(collider.transform.position);
 			}
 		}		
 	}

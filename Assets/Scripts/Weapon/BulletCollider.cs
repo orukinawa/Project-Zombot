@@ -16,8 +16,6 @@ public class BulletCollider : BulletBase
 	protected Transform mTransform;
 	protected BoxCollider mBoxCollider;
 	
-	//int RaycastCall = 0;
-	
 	public override void InitializeBullet (float speed, float range, GameObject effect)
 	{
 		base.InitializeBullet (speed, range, effect);
@@ -26,14 +24,12 @@ public class BulletCollider : BulletBase
 		mTransform = transform;	
 		direction = mTransform.TransformDirection(Vector3.forward);
 		previousPosition = mTransform.position;
-		mBoxCollider.size = new Vector3(0.1f, 0.1f, speed * Time.fixedDeltaTime);
-		mBoxCollider.center = new Vector3(0.0f, 0.0f, -speed/2*Time.fixedDeltaTime);
+		mBoxCollider.size = new Vector3(0.5f, 0.5f, speed * Time.fixedDeltaTime);
+		mBoxCollider.center = new Vector3(0.0f, 0.0f, -0.5f * (speed * Time.fixedDeltaTime));
 		layerInt = ~(1 << LayerMask.NameToLayer("Bullet"));
-		//Debug.Log("Collider size: " + mBoxCollider.size);
-		//RaycastCall = 0;
 	}
 
-	void Update ()
+	void FixedUpdate ()
 	{
 		_Update ();
 	}
@@ -47,8 +43,8 @@ public class BulletCollider : BulletBase
 	public override void _Update ()
 	{
 		previousPosition = mTransform.position;
-		mTransform.position += direction * bulletSpeed * Time.deltaTime;
-		distanceTravelled += Time.deltaTime * bulletSpeed;
+		mTransform.position += direction * bulletSpeed * Time.fixedDeltaTime;
+		distanceTravelled += Time.fixedDeltaTime * bulletSpeed;
 		if(distanceTravelled > bulletRange)
 		{
 			SelfDestruct();
@@ -72,16 +68,10 @@ public class BulletCollider : BulletBase
 			SelfDestruct();
 			return;
 		}
-		if(col.gameObject.layer == LayerMask.NameToLayer("Enemy") || col.gameObject.layer == LayerMask.NameToLayer("Environment") || col.gameObject.layer == LayerMask.NameToLayer("EnemyShield"))
+		if(col.gameObject.layer == LayerMask.NameToLayer("Enemy") || col.gameObject.layer == LayerMask.NameToLayer("Environment"))
 		{			
 			effectPrefab.GetComponent<EffectBase>().ApplyEffect(col,gameObject, transform.position);
 			SelfDestruct();
-//			RaycastHit hit;
-//			if (Physics.Linecast(previousPosition, mTransform.position + mTransform.forward * 0.01f, out hit, layerInt))
-//			{
-//				effectPrefab.GetComponent<EffectBase>().ApplyEffect(hit.collider,gameObject, hit.point);
-//				SelfDestruct();
-//			}
 		}
 	}
 	

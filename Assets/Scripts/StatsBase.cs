@@ -15,7 +15,7 @@ public class StatsBase : MonoBehaviour
 		//currentMoveSpeed = defaultMoveSpeed;
 	}
 	
-	public virtual void ApplyDamage(float damage)
+	public virtual void ApplyDamage(float damage, GameObject player = null)
 	{
 		currentHealth += damage;
 		if(currentHealth <= 0)

@@ -8,12 +8,14 @@ public class StatsEnemy : StatsBase
 	
 	void Start ()
 	{
+		Debug.Log("Start called on " + gameObject.name);
 		enemyBase = GetComponent<EnemyBase>();
 		initializeStats();
 	}
 	
 	public override void initializeStats ()
 	{
+		Debug.Log("initialize called on "+ gameObject.name);
 		currentHealth = maxHealth;
 		enemyBase.mCurrSpeed = enemyBase.mMaxSpeed;
 	}
