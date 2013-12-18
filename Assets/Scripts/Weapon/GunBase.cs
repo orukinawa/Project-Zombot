@@ -3,6 +3,13 @@ using System.Collections;
 
 public class GunBase : MonoBehaviour
 {
+	public enum CountModType
+	{
+		SET,
+		INCREMENT,
+		DECREMENT
+	}	
+	
 	//Attributes
 	public GameObject bulletMod;
 	public GameObject effectMod;
@@ -145,6 +152,19 @@ public class GunBase : MonoBehaviour
 				canShoot = true;
 			}
 		}
+	}
+	
+	public virtual void SetBulletsPerWave(CountModType mType, int bulletCount)
+	{
+	}
+	
+	public virtual void SetWavesPerShot(CountModType mType, int waveCount)
+	{
+	}
+	
+	public virtual bool isGunShooting()
+	{
+		return true;
 	}
 	
 	void OnGUI()

@@ -7,6 +7,8 @@ public class PlayerInputManager : MonoBehaviour
 	InventoryManager invManager;
 	InteractionManager interManager;
 	StatsCharacter statChar;
+	GamePadInput mGamePadInput;
+	public Animator mAnimator;
 	
 	void Awake()
 	{
@@ -14,14 +16,17 @@ public class PlayerInputManager : MonoBehaviour
 		moveController = GetComponent<MovementController>();
 		interManager = GetComponent<InteractionManager>();
 		statChar = GetComponent<StatsCharacter>();
+		mGamePadInput = GetComponent<GamePadInput>();
 	}
 	
 	void Update()
 	{
-		if(Input.GetButton("Shoot"))
+		bool tempShootFlag = mGamePadInput.GetAxis(GamePadInput.AxisType.RIGHT_TRIGGER) > 0.5f;
+		mAnimator.SetBool("isShooting",tempShootFlag);
+		if(tempShootFlag)
 		{
 			invManager.ShootWeapon();
-		}		
+		}
 		if(Input.GetButtonDown("Reload"))
 		{
 			invManager.ReloadWeapon();

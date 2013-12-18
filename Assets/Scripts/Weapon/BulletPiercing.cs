@@ -10,10 +10,12 @@ public class BulletPiercing : BulletCollider
 		_Update();
 	}
 	
-	void OnTriggerEnter(Collider col)
+	void OnTriggerStay(Collider col)
 	{
+		//Debug.Log("Stay " + col.name);
 		_OnTriggerEnter(col);
-	}	
+		//Debug.Log(col.name + " has been hit!");
+	}
 	
 	public override void InitializeBullet (float speed, float range, GameObject effect)
 	{
@@ -37,13 +39,13 @@ public class BulletPiercing : BulletCollider
 		{
 			RaycastHit hit;
 			float rayDistance = bulletSpeed * Time.fixedDeltaTime;
-			if (Physics.Linecast(previousPosition, mTransform.position, layerInt))
+			if (Physics.Linecast(previousPosition - (mTransform.position - previousPosition), mTransform.position, layerInt))
 			{
-				if(Physics.Linecast(previousPosition, mTransform.position, out hit, environmentLayerInt))
+				if(Physics.Linecast(previousPosition - (mTransform.position - previousPosition), mTransform.position, out hit, environmentLayerInt))
 				{
 					rayDistance = hit.distance;
 				}
-				RaycastHit[] hits = Physics.RaycastAll(previousPosition, transform.forward, rayDistance, layerInt);
+				RaycastHit[] hits = Physics.RaycastAll(previousPosition - (mTransform.position - previousPosition), mTransform.forward, rayDistance, layerInt);
 				foreach (RaycastHit mHit in hits)
 				{
 					effectPrefab.GetComponent<EffectBase>().ApplyEffect(mHit.collider,gameObject, mHit.point);
@@ -52,6 +54,7 @@ public class BulletPiercing : BulletCollider
 		}
 		else if(col.gameObject.layer == LayerMask.NameToLayer("Environment"))
 		{
+			effectPrefab.GetComponent<EffectBase>().ApplyEffect(col,gameObject, transform.position);
 			SelfDestruct();
 		}
 	}

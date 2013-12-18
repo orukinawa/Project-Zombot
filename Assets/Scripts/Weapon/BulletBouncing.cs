@@ -22,7 +22,7 @@ public class BulletBouncing : BulletCollider
 		_Update();
 	}
 	
-	void OnTriggerEnter(Collider col)
+	void OnTriggerStay(Collider col)
 	{
 		_OnTriggerEnter(col);
 	}
@@ -42,7 +42,7 @@ public class BulletBouncing : BulletCollider
 		if(col.gameObject.layer == LayerMask.NameToLayer("Enemy"))
 		{
 			RaycastHit hit;
-			if (Physics.Linecast(previousPosition, mTransform.position, out hit, layerInt))
+			if (Physics.Linecast(previousPosition - (mTransform.position - previousPosition), mTransform.position, out hit, layerInt))
 			{
 				if(hit.collider.gameObject.layer == LayerMask.NameToLayer("Enemy"))
 				{
