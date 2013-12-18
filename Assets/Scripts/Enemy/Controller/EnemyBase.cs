@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-abstract public class EnemyBase : MonoBehaviour
+public class EnemyBase : MonoBehaviour
 {
 	//! a prefab that will be instantiated when spawning
 	public GameObject mSpawnAnimationPrefab;
@@ -32,6 +32,9 @@ abstract public class EnemyBase : MonoBehaviour
 	public float mMaxSpeed;
 	public float mCurrSpeed;
 	
+	//! Animation controller
+	AnimationController mAnimationController;
+	
 	//! for now
 	[HideInInspector]
 	public CharacterController charController;
@@ -41,6 +44,7 @@ abstract public class EnemyBase : MonoBehaviour
 		charController = GetComponent<CharacterController>();
 		mStatEnemy = GetComponent<StatsEnemy>();
 		mChildTransform = GetComponentInChildren<Animation>().transform;
+		mAnimationController = GetComponent<AnimationController>();
 		//mCurrSpeed = mMaxSpeed;
 	}
 	
@@ -54,6 +58,12 @@ abstract public class EnemyBase : MonoBehaviour
 	public void InstantiateSpawnAni()
 	{
 		
+	}
+	
+	public AnimationController Animator{
+		get{	
+			return mAnimationController;	
+		}
 	}
 	
 	//! call all the death function in all the current listed behaviours of this enemy
@@ -82,7 +92,7 @@ abstract public class EnemyBase : MonoBehaviour
 		return manager;
 	}
 	
-	public virtual void GetFinalSteerDirection()
+	public virtual void UpdateBehaviours()
 	{
 		Vector3 resultantDirection = Vector3.zero;
 		
@@ -92,15 +102,33 @@ abstract public class EnemyBase : MonoBehaviour
 			
 			resultantDirection += behaviourBase.UpdateBehaviour(this).normalized * behaviourBase.mInfluenceWeight;
 		}
-		
-		
 		//! debug the front of the obj(!REMOVE)
 		//Debug.DrawRay(transform.position, transform.forward * 3.0f, Color.blue);
-		
 		Steer(resultantDirection);
 	}
 	
-	public abstract void Steer(Vector3 direction);
+	public void Steer(Vector3 resultantVector)
+	{
+		Vector3 targetVelocity;
+		float maxSpeed = mCurrSpeed;
+		targetVelocity = resultantVector.normalized * maxSpeed;
+		targetVelocity.y = 0;
+		if(targetVelocity.sqrMagnitude > Mathf.Epsilon)
+		{
+			transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(targetVelocity),mSteeringForce * Time.deltaTime);
+			//transform.position += transform.forward * mMaxSpeed * Time.deltaTime;
+			charController.SimpleMove(transform.forward * maxSpeed);
+		}
+		else
+		{
+			charController.SimpleMove(Vector3.zero);
+		}
+	}
+	
+	void Update()
+	{
+		UpdateBehaviours();
+	}
 	
 	void OnDrawGizmos()
 	{
