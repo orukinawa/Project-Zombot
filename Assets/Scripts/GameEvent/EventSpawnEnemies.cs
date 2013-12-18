@@ -86,7 +86,7 @@ public class EventSpawnEnemies : MonoBehaviour
 			float randX = Random.Range(min.x,max.x);
 			float randZ = Random.Range(min.z,max.z);
 		
-			pos = new Vector3(randX, 5.0f, randZ);
+			pos = new Vector3(randX, 5.0f + colliderRad, randZ);
 			if(!Physics.CheckSphere(pos,colliderRad,mWallLayer))
 			{
 				validSpawn = true;
@@ -145,7 +145,7 @@ public class EventSpawnEnemies : MonoBehaviour
 				float randX = Random.Range(min.x,max.x);
 				float randZ = Random.Range(min.z,max.z);
 				
-				pos = new Vector3(randX, 5.0f, randZ);
+				pos = new Vector3(randX, 5.0f * (colliderRad * 2), randZ);
 				if(!Physics.CheckSphere(pos,colliderRad,mWallLayer))
 				{
 					validSpawn = true;

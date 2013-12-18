@@ -57,7 +57,7 @@ public class EventMap : MonoBehaviour
 	public const int mDefaultTileSize = 1;
 	
 	//! measure in units eg. 4x4 per tile
-	public static int sTileSize = 10;
+	public static int sTileSize = 20;
 	
 	public static int AiCellLength = 2;
 	

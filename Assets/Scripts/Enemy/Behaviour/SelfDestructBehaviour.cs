@@ -35,6 +35,8 @@ public class SelfDestructBehaviour : BehaviourBase
 	public int mKnockBackForce;
 	public TYPE mType;
 	
+	public Color DecalDestructTimerColor;
+	
 	// when about to self destruct
 	public float SpeedMultiplier;
 	
@@ -125,7 +127,7 @@ public class SelfDestructBehaviour : BehaviourBase
 			
 			foreach(Renderer render in data.mMeshRenderers)
 			{
-				render.material.color = Color.red;
+				render.material.color = DecalDestructTimerColor;
 			}
 		}
 	}

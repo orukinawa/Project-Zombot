@@ -65,3 +65,17 @@ IMPORTANT
 - SOUNDS
 - ghost immbolize needs trap mesh
 
+
+// todo
+- change size of enemies to fit the theme
+	- hooker - still fixing (will need to limit it) - DONE
+	- kamikaze - DONE
+	- lesser - DONE
+	- spitter - DONE
+	- breeder - DONE
+	- ghost
+- Check changing size of the level works fine - DONE
+- reduce wall size and see tile will work
+- aggro case if 1 hr cannot scarp that non aggro spawning
+- spawn particle for the ones that pursue!
+- change player size

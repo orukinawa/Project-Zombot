@@ -14,10 +14,15 @@ public class SpawnBehaviour : BehaviourBase {
 	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)
 	{
 		RaycastHit hit;
-		Physics.Raycast(enemyBase.transform.position,Vector3.down,out hit,Mathf.Infinity);
+//		Physics.Raycast(enemyBase.transform.position,Vector3.down,out hit,Mathf.Infinity);
 		
-		Vector3 dir = hit.point - enemyBase.transform.position;
-		if(dir.sqrMagnitude <= 1.21f + enemyBase.charController.radius)
+//		Vector3 dir = hit.point - enemyBase.transform.position;
+//		if(dir.sqrMagnitude <= 1.21f + enemyBase.charController.radius)
+//		{
+//			ExecuteTransition(enemyBase);	
+//		}
+		
+		if(Physics.Raycast(enemyBase.transform.position,Vector3.down,out hit,Mathf.Infinity))
 		{
 			ExecuteTransition(enemyBase);	
 		}

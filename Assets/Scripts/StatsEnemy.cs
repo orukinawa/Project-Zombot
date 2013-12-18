@@ -28,6 +28,7 @@ public class StatsEnemy : StatsBase
 			decalOnHit = true;
 			foreach(Renderer render in enemyBase.mMeshRenderers)
 			{
+				Debug.Log("Hit me");
 				render.material.color = Color.red;
 			}
 		}
