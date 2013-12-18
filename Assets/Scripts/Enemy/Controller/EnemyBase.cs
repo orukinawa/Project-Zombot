@@ -35,6 +35,8 @@ public class EnemyBase : MonoBehaviour
 	//! Animation controller
 	AnimationController mAnimationController;
 	
+	public Renderer[] mMeshRenderers;
+	
 	//! for now
 	[HideInInspector]
 	public CharacterController charController;
@@ -45,6 +47,7 @@ public class EnemyBase : MonoBehaviour
 		mStatEnemy = GetComponent<StatsEnemy>();
 		mChildTransform = GetComponentInChildren<Animation>().transform;
 		mAnimationController = GetComponent<AnimationController>();
+		mMeshRenderers = GetComponentsInChildren<Renderer>();
 		//mCurrSpeed = mMaxSpeed;
 	}
 	

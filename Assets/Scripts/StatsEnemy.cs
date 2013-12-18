@@ -5,6 +5,7 @@ public class StatsEnemy : StatsBase
 {
 	//ModelColorManager colorManager = null;
 	EnemyBase enemyBase;
+	bool decalOnHit = false;
 	
 	void Start ()
 	{
@@ -20,13 +21,44 @@ public class StatsEnemy : StatsBase
 		enemyBase.mCurrSpeed = enemyBase.mMaxSpeed;
 	}
 	
-	public override void ApplyDamage (float damage)
+	IEnumerator HitDecal(float duration)
+	{
+		if(!decalOnHit)
+		{
+			decalOnHit = true;
+			foreach(Renderer render in enemyBase.mMeshRenderers)
+			{
+				render.material.color = Color.red;
+			}
+		}
+		yield return new WaitForSeconds(duration);	
+		
+		foreach(Renderer render in enemyBase.mMeshRenderers)
+		{
+			render.material.color = Color.white;
+		}
+		
+		decalOnHit = false;
+	}
+	
+	public override void ApplyDamage (float damage, GameObject player = null)
 	{
 		currentHealth += damage;
+		
 		if(currentHealth <= 0)
 		{
 			currentHealth = 0.0f;
 		}
+		else
+		{
+			if(damage < 0)
+			{
+				//Debug.Log("Hit me");
+				// play the hit decal
+				StartCoroutine(HitDecal(0.1f));	
+			}
+		}
+		
 		if(currentHealth > maxHealth)
 		{
 			currentHealth = maxHealth;

@@ -71,9 +71,11 @@ public class EventManager : MonoBehaviour
 	public static bool mStartGame;
 	
 	//! this is for a single player test
-	public GameObject mPlayerPrefab;
+	public GameObject mPlayerOne;
+	public GameObject mPlayerTwo;
+	public GameObject mSplitScreenManager;
 	
-	public int mNumPlayer = 1;
+	public int mNumPlayer = 2;
 	
 	//! keep players references
 	public List<PlayerData> mPlayerInGame = new List<PlayerData>();
@@ -203,8 +205,19 @@ public class EventManager : MonoBehaviour
 		for(int i = 0; i < mNumPlayer; i++)
 		{
 			int numRand = Random.Range(0, mStartBlocks.Count);
-			mStartBlocks[numRand].SpawnPlayer(mPlayerPrefab,this);
+			if(i == 0)
+			{
+				mStartBlocks[numRand].SpawnPlayer(mPlayerOne,this);
+			}
+			else if(i == 1)
+			{
+				mStartBlocks[numRand].SpawnPlayer(mPlayerTwo,this);
+			}
 		}
+		
+		
+		// instantiate msplitescreenManager
+		Instantiate(mSplitScreenManager);
 	}
 	
 	//! add/subtract talent point

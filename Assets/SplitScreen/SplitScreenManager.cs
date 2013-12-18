@@ -70,6 +70,8 @@ public class SplitScreenManager : MonoBehaviour
 		mTransform = transform;
 		mTransform.position = new Vector3(mTransform.position.x,cameraHeight,mTransform.position.z);
 		closeEnoughSqrDistance = (2*cameraDistance)*(2*cameraDistance);				
+		playerOneTransform = GameObject.Find("Player1(Clone)").transform;
+		playerTwoTransform = GameObject.Find("Player2(Clone)").transform;
 	}
 	
 	void LateUpdate()

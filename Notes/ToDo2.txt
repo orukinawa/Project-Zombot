@@ -43,16 +43,25 @@
 
 - Rex requirement - DONE
 
-- increase enemy collider so that player cannot pass through
+- increase enemy collider so that player cannot pass through - DONE
 
-- all level blocks need plane at the btm
-
-- need change renderer when hit enemy
+- need change renderer when hit enemy - DONE
 
 - need to figure out how to spawn particle for the aggro enemy as they don start at spawn state
   / this aggro enemy don spawn at player's block location.
   Solution: instantiate particle for that scenario only
 
+- get NGUI done
+
 - smaller walls with offset tiled
 
-- get NGUI done
+IMPORTANT
+===========
+- Spawning whole everthing
+- Enemy last hit
+- collider offset weapon z
+- intro scene
+- NGUI
+- SOUNDS
+- ghost immbolize needs trap mesh
+
