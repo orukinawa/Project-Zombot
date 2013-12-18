@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using System.Collections;
 
@@ -7,6 +8,7 @@ class MeleeLeapBehaviourData
 	//public float mDefaultSpeed;
 	public Vector3 mLeapTarget;
 	public bool mIsAttacking;
+	public bool mIsLeaping;
 }
 
 public class MeleeLeapBehaviour : BehaviourBase
@@ -36,6 +38,10 @@ public class MeleeLeapBehaviour : BehaviourBase
 	
 	// the animation names
 	public AnimationClip LeapAnimationClip;
+	public AnimationClip IdleAnimationClip;
+	
+//	public bool isleaping;
+//	public bool isAttacking;
 	
 	public override void Init (EnemyBase enemyBase)
 	{
@@ -50,10 +56,18 @@ public class MeleeLeapBehaviour : BehaviourBase
 			data = (MeleeLeapBehaviourData)enemyBase.mCustomData[this];
 		}
 		data.mIsAttacking = false;
+		data.mIsLeaping = false;
 		data.mLeapTarget = Vector3.zero;
 		data.mCoolDownLeapTimer = mCoolDownLeapDuration;
 		mMinDistSqr = mMinDist * mMinDist;
+		// set the callback when an animation is complete
+		enemyBase.Animator.IsComplete(LeapAnimationClip,OnCompleteLeap);
 		//! cache the max speed
+	}
+	
+	public override void DeInit (EnemyBase enemyBase)
+	{
+		enemyBase.Animator.mCurrentClip = null;
 	}
 	
 	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)
@@ -71,7 +85,9 @@ public class MeleeLeapBehaviour : BehaviourBase
 		Vector3 targetPos = enemyBase.mTargetPlayer.transform.position;
 		//! rotate
 		Vector3 targetDirection =  targetPos - enemyBase.transform.position;
-		if(!data.mIsAttacking)
+		
+		// if you are attacking or leaping don't rotate
+		if(!data.mIsAttacking && !data.mIsLeaping)
 		{
 			//! Get the rotation angle
 			float targetAngle = GetAngleHelper.GetAngle(targetDirection,enemyBase.transform.forward,enemyBase.transform.up);
@@ -84,52 +100,45 @@ public class MeleeLeapBehaviour : BehaviourBase
 			}
 		}
 		
+		// calculate cooldown before the next attack attempt
 		data.mCoolDownLeapTimer += Time.deltaTime;
 		if(data.mCoolDownLeapTimer > mCoolDownLeapDuration)
 		{
 			//! check if in view of sight to leap
 			float angle = Vector3.Angle(targetDirection,enemyBase.transform.forward);
-			if(angle < 10.0f && !data.mIsAttacking)
+			if(angle < 10.0f && !data.mIsAttacking && !data.mIsLeaping)
 			{
+				//Debug.Log("set variables");
 				data.mIsAttacking = true;
+				data.mIsLeaping = true;
 				data.mLeapTarget = targetPos;
 			}
 			
-			//! perform leap
+			
 			if(data.mIsAttacking)
 			{
 				//! do attacking animation here
 				Vector3 leapDirection = data.mLeapTarget - enemyBase.transform.position;
 				//leapMagnitude = leapDirection.sqrMagnitude;
 				
-				//! check if it hits a player/players
-				if(mTargetType == TARGET_TYPE.SINGLE)
+				enemyBase.Animator.CrossFade(LeapAnimationClip,WrapMode.Once);
+			
+				if(data.mIsLeaping)
 				{
-					data.mIsAttacking = CheckSingleTarget(enemyBase,mAttackAngle);
+					// if touch player will return false
+					data.mIsLeaping = CheckSingleTarget(enemyBase,mAttackAngle);
+					//Debug.Log("checking for hit: " + data.mIsLeaping);
+					// calculate movement of the leap
+					if(leapDirection.sqrMagnitude > mMinDistSqr)
+					{
+						enemyBase.charController.SimpleMove(enemyBase.transform.forward * enemyBase.mCurrSpeed * mLeapSpeed);
+					}
+					else
+					{
+						// if leap and misses the target
+						data.mIsLeaping = false;
+					}
 				}
-				else if(mTargetType == TARGET_TYPE.MULTIPLE)
-				{
-					data.mIsAttacking = CheckMultipleTarget(enemyBase,mAttackAngle);
-				}
-				
-				if(leapDirection.sqrMagnitude > mMinDistSqr)
-				{
-					enemyBase.Animator.CrossFade(LeapAnimationClip,WrapMode.Loop);
-					enemyBase.charController.SimpleMove(enemyBase.transform.forward * enemyBase.mCurrSpeed * mLeapSpeed);
-				}
-				else
-				{
-					data.mIsAttacking = false;
-				}
-				
-				if(!data.mIsAttacking)
-				{
-					//! if leap and miss towards the leap destination
-					data.mCoolDownLeapTimer = 0.0f;
-					//enemyBase.Animator.PlayAniCrossFade(IdleAfterLeapAnimation,WrapMode.Loop);
-				}
-				
-				//Debug.DrawRay(data.mLeapTarget,Vector3.up * 3.0f, Color.blue);
 			}
 		}
 		
@@ -164,7 +173,6 @@ public class MeleeLeapBehaviour : BehaviourBase
 		if(singleTarget)
 		{
 			//! if hit an enemy
-			//singleTarget.GetComponent<StatsCharacter>().ApplyDamage(-mDamage);
 			Instantiate(mClawEffect,singleTarget.transform.position,Quaternion.identity);
 			singleTarget.GetComponent<StatsCharacter>().currentHealth -= mDamage;
 			return false;
@@ -201,9 +209,29 @@ public class MeleeLeapBehaviour : BehaviourBase
 		return true;
 	}
 	
+	/// <summary>
+	/// Raises the complete leap event.
+	/// </summary>
+	/// <param name='enemyBase'>
+	/// If set to <c>true</c> enemy base.
+	/// </param>
+	bool OnCompleteLeap(EnemyBase enemyBase)
+	{
+		MeleeLeapBehaviourData data = (MeleeLeapBehaviourData)enemyBase.mCustomData[this];
+		
+		//Debug.Log("[MELEE_LEAP_BEHAVIOUR] Leap is complete");
+		//! if leap and miss towards the leap destination
+		data.mIsAttacking = false;
+		data.mIsLeaping = false;
+		data.mCoolDownLeapTimer = 0.0f;
+		enemyBase.Animator.CrossFade(IdleAnimationClip,WrapMode.Loop);
+		
+		return false;
+	}
+	
 //	void OnGUI()
 //	{
-//		GUI.Box (new Rect(0,50,200,50),"Leap magnitude: " + leapMagnitude);
+//		GUI.Label (new Rect(0,50,200,50),"Leap: " + isleaping);
 //		GUI.Label(new Rect(0,100,200,50),"isAttacking: " + isAttacking);
 //	}
 }

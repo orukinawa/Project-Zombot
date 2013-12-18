@@ -6,6 +6,16 @@ public class SeparationBehaviour : BehaviourBase
 	public float mRadius;
 	public LayerMask mTargetLayer;
 	
+	public AnimationClip IdleAnimation;
+	
+	public override void Init (EnemyBase enemyBase)
+	{
+		if(IdleAnimation != null)
+		{
+			enemyBase.Animator.CrossFade(IdleAnimation,WrapMode.Loop);
+		}
+	}
+	
 	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)
 	{
 		Vector3 result = Vector3.zero;

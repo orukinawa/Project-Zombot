@@ -1457,14 +1457,14 @@ public class EventMap : MonoBehaviour
 		}
 	}
 	
-//	void OnGUI()
-//	{
-//		mDrawLevelNodes = GUI.Toggle(new Rect(0,0,300,50),mDrawLevelNodes,"Draw Level Nodes");
-//		mDrawPathFindingLink = GUI.Toggle(new Rect(0,50,300,50),mDrawPathFindingLink,"Draw linkage between initial block");
-//		mDrawBigAiNodes = GUI.Toggle(new Rect(0,100,300,50),mDrawBigAiNodes,"Draw Big Ai Nodes");
-//		mDrawSmallAiNodes = GUI.Toggle(new Rect(0,150,300,50),mDrawSmallAiNodes,"Draw Small Ai Nodes");
-//		EventManager.mDrawInitialBlockMap = GUI.Toggle(new Rect(0,200,300,50),EventManager.mDrawInitialBlockMap,"Draw the event manager map");
-//	}
+	void OnGUI()
+	{
+		mDrawLevelNodes = GUI.Toggle(new Rect(0,0,300,50),mDrawLevelNodes,"Draw Level Nodes");
+		mDrawPathFindingLink = GUI.Toggle(new Rect(0,50,300,50),mDrawPathFindingLink,"Draw linkage between initial block");
+		mDrawBigAiNodes = GUI.Toggle(new Rect(0,100,300,50),mDrawBigAiNodes,"Draw Big Ai Nodes");
+		mDrawSmallAiNodes = GUI.Toggle(new Rect(0,150,300,50),mDrawSmallAiNodes,"Draw Small Ai Nodes");
+		EventManager.mDrawInitialBlockMap = GUI.Toggle(new Rect(0,200,300,50),EventManager.mDrawInitialBlockMap,"Draw the event manager map");
+	}
 	
 	void OnDrawGizmos()
 	{

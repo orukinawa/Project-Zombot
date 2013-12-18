@@ -8,6 +8,11 @@ public class SelfDestructBehaviourData
 	public float mBlinkingDuration;
 	public bool mReadyToSelfDestruct;
 	public float mSelfDestructTimer;
+	
+	public Renderer[] mMeshRenderers;
+	
+	// with speed boost
+	public float mCurrSpeed;
 }
 
 public class SelfDestructBehaviour : BehaviourBase
@@ -30,6 +35,13 @@ public class SelfDestructBehaviour : BehaviourBase
 	public int mKnockBackForce;
 	public TYPE mType;
 	
+	// when about to self destruct
+	public float SpeedMultiplier;
+	
+	public AnimationClip RoarAnimationClip;
+	public AnimationClip WalkAnimationClip;
+	public float WalkAnimationSpeed;
+	
 	public override void Init (EnemyBase enemyBase)
 	{
 		SelfDestructBehaviourData data;
@@ -37,21 +49,25 @@ public class SelfDestructBehaviour : BehaviourBase
 		{
 			data = new SelfDestructBehaviourData();
 			enemyBase.mCustomData[this] = data;
+			data.mMeshRenderers = enemyBase.GetComponentsInChildren<Renderer>();
+			
 		}
 		else
 		{
 			data = (SelfDestructBehaviourData)enemyBase.mCustomData[this];
 		}
+		data.mCurrSpeed = enemyBase.mMaxSpeed * SpeedMultiplier;
 		data.mSelfDestructTimer = 0.0f;
 		data.mKamikazeRoarTimer = 0.0f;
 		data.mBlinkingTimer = 0.0f;
 		data.mReadyToSelfDestruct = false;
 		data.mBlinkingDuration = 0.5f;
+		
 	}
 	
 	public void SelfDestruct(EnemyBase enemyBase) 
 	{
-		GameObject explosion = (GameObject)Instantiate(mExplosionPrefab, enemyBase.transform.position, Quaternion.identity);
+		GameObject explosion = (GameObject)Instantiate(mExplosionPrefab, enemyBase.transform.position, mExplosionPrefab.transform.rotation);
 		Vector3 explodePos = explosion.transform.position;
 		float radius = explosion.collider.bounds.extents.x;
 		Collider[] colliders = Physics.OverlapSphere(explodePos,radius,mTargetLayer);
@@ -66,30 +82,32 @@ public class SelfDestructBehaviour : BehaviourBase
 			//col.GetComponent<CharacterController>().SimpleMove(-dir * mKnockBackForce);
 		}
 		
-		Destroy(enemyBase.gameObject);
+		SelfDestructBehaviourData data = (SelfDestructBehaviourData)enemyBase.mCustomData[this];
 		
-//		//! kill him and sent to the pool
-//		enemyBase.GetComponent<StatsEnemy>().ApplyDamage(-9000);
-//		enemyBase.GetComponent<StatsEnemy>().ApplySlow(0);
-//		Debug.Log("yolo");
+		// reset the mesh renderers to white
+		foreach(Renderer render in data.mMeshRenderers)
+		{
+			render.material.color = Color.white;
+		}
+		
+		enemyBase.mStatEnemy.SelfDestruct();
 	}
 	
-	public override void Death (EnemyBase enemyBase)
+	public override void DeInit (EnemyBase enemyBase)
 	{
-//		SelfDestructBehaviourData data = (SelfDestructBehaviourData)enemyBase.mCustomData[this];
-//		data.mSelfDestructTimer = 0.0f;
-//		data.mKamikazeRoarTimer = 0.0f;
-//		data.mBlinkingTimer = 0.0f;
-//		data.mReadyToSelfDestruct = false;
-//		data.mBlinkingDuration = 0.5f;
-//		enemyBase.GetComponent<StatsEnemy>().RestoreMoveSpeed();
+		SelfDestructBehaviourData data = (SelfDestructBehaviourData)enemyBase.mCustomData[this];
+		// if he dies by shot and not self destruct
+		foreach(Renderer render in data.mMeshRenderers)
+		{
+			render.material.color = Color.white;
+		}
 	}
 	
 	public void BlinkingEffect(EnemyBase enemyBase, SelfDestructBehaviourData data)
 	{
 		data.mBlinkingTimer += Time.deltaTime;
-		Renderer[] renderers = enemyBase.GetComponentsInChildren<Renderer>();
-		foreach(Renderer render in renderers)
+		//Renderer[] renderers = enemyBase.GetComponentsInChildren<Renderer>();
+		foreach(Renderer render in data.mMeshRenderers)
 		{
 			render.material.color = Color.white;
 		}
@@ -105,7 +123,7 @@ public class SelfDestructBehaviour : BehaviourBase
 				data.mBlinkingDuration = 0.1f;
 			}
 			
-			foreach(Renderer render in renderers)
+			foreach(Renderer render in data.mMeshRenderers)
 			{
 				render.material.color = Color.red;
 			}
@@ -139,17 +157,20 @@ public class SelfDestructBehaviour : BehaviourBase
 			data.mReadyToSelfDestruct = true;
 			BlinkingEffect(enemyBase,data);
 			data.mSelfDestructTimer += Time.deltaTime;
+			enemyBase.mCurrSpeed = data.mCurrSpeed;
 			if(data.mSelfDestructTimer > mSelfDestructDelay)
 			{
 				//! booms away
 				SelfDestruct(enemyBase);
 			}
+			enemyBase.Animator.CrossFade(WalkAnimationClip,WrapMode.Loop,WalkAnimationSpeed);
 			
 			return targetDirection;
 		}
 		else
 		{
 			//! perform roar kamikaze animation here
+			enemyBase.Animator.CrossFade(RoarAnimationClip,WrapMode.Once);
 		}
 		
 		return Vector3.zero;

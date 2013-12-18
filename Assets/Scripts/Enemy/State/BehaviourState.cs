@@ -25,7 +25,6 @@ public class BehaviourState : State
 		//! Update the controller behaviour 
 		EnemyBase enemyBase = stateManager.gameObject.GetComponent<EnemyBase>();
 		enemyBase.RefreshBehaviour(this);
-		
 	}
 	//! Updates the state every new frame
 	public override void StateUpdate (StateManager stateManager)

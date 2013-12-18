@@ -19,8 +19,20 @@ public class HookingBehaviour : BehaviourBase
 	//public float mHookMaxDist;
 	public float mHookMinDist;
 	public float mHookRadius;
+	// the hook distance that can travel
+	public float HookMaxDist;
+	// speak for itself
+	public float HookDamage = 10;
+	
 	float mHookMaxDistSqr;
 	float mHookMinDistSqr;
+	
+	public AnimationClip HookAnimationClip;
+	public AnimationClip IdleAnimationClip;
+	
+	public float HookAnimationSpeed;
+	
+	public GameObject HookParticleEffect;
 	
 	public override void Init (EnemyBase enemyBase)
 	{
@@ -37,9 +49,24 @@ public class HookingBehaviour : BehaviourBase
 		data.mHookTarget = null;
 		data.mAnimationDelayTimer = 0.0f;
 		data.mReverseHook = false;
+		
+		if(data.mProjectileRef != null)
+		{
+			data.mProjectileRef.transform.position = enemyBase.transform.position;
+		}
+		
 		//! cache the min and max distance
 		//mHookMaxDistSqr = mHookMaxDist * mHookMaxDist;
-		mHookMaxDistSqr = enemyBase.mAttackRadius * enemyBase.mAttackRadius;
+		
+		if(HookMaxDist <= 3.0f)
+		{
+			HookMaxDist = 3.0f;
+		}
+		
+		// set the max hook distance
+		mHookMaxDistSqr = HookMaxDist * HookMaxDist;
+		
+		// set the min hook distance
 		mHookMinDistSqr = mHookMinDist * mHookMinDist;
 	}
 	
@@ -47,8 +74,12 @@ public class HookingBehaviour : BehaviourBase
 	{
 		StatsCharacter statCh = hookTarget.GetComponent<StatsCharacter>();
 		if(!statCh)return;
-		statCh.currentHealth -= 10;
-		statCh.ApplySlow(0);
+		
+		Instantiate(HookParticleEffect, hookTarget.transform.position, Quaternion.identity);
+		// change the layer so that it cannot be hook by another
+		statCh.gameObject.layer = LayerMask.NameToLayer("HookedPlayer");
+		statCh.currentHealth -= HookDamage;
+		statCh.Immobilize();
 	}
 	
 	public void ReleaseTarget(EnemyBase enemyBase)
@@ -58,10 +89,18 @@ public class HookingBehaviour : BehaviourBase
 		if(data.mHookTarget != null)
 		{
 			data.mHookTarget.transform.parent = null;
-			data.mHookTarget.GetComponent<StatsCharacter>().RestoreMoveSpeed();
+			data.mHookTarget.layer = LayerMask.NameToLayer("Player");
+			data.mHookTarget.transform.position += Vector3.up * 1.0f;
+			data.mHookTarget.GetComponent<StatsCharacter>().RemoveImmobilize();
 		}
 		
-		Destroy(data.mProjectileRef);
+		//Destroy(data.mProjectileRef);
+		data.mProjectileRef.SetActive(false);
+	}
+	
+	public override void DeInit (EnemyBase enemyBase)
+	{
+		ReleaseTarget(enemyBase);
 	}
 	
 	public override void Death (EnemyBase enemyBase)
@@ -80,15 +119,30 @@ public class HookingBehaviour : BehaviourBase
 		{
 			//! do animation preparing to throw the hook
 			//! best to use the frame as the duration
+			enemyBase.Animator.CrossFade(HookAnimationClip,WrapMode.Loop,HookAnimationSpeed);
 		}
 		else
 		{
+			enemyBase.Animator.CrossFade(IdleAnimationClip,WrapMode.Loop,2.0f);
+			
 			if(data.mProjectileRef == null)
 			{
 				data.mProjectileRef = (GameObject)Instantiate(mHookProjectile,pos,Quaternion.identity);
+				data.mProjectileRef.transform.rotation = enemyBase.transform.rotation;
 			}
-			Vector3 hookVector = data.mProjectileRef.transform.position - enemyBase.transform.position;
+			else
+			{
+				if(!data.mProjectileRef.activeSelf)
+				{
+					data.mProjectileRef.SetActive(true);
+					data.mProjectileRef.transform.rotation = enemyBase.transform.rotation;
+				}
+			}
 			
+			Vector3 hookVector = data.mProjectileRef.transform.position - enemyBase.transform.position;
+			hookVector.y = 0.0f;
+			
+			// pull back
 			if(data.mReverseHook)
 			{
 				//! once an object is hook
@@ -100,33 +154,57 @@ public class HookingBehaviour : BehaviourBase
 					{
 						ReleaseTarget(enemyBase);
 					}
+					// go back to other state
 					ExecuteTransition(enemyBase);
-					Destroy(data.mProjectileRef);
+					// destroy the hook projectile
+					//Destroy(data.mProjectileRef);
+					if(!data.mProjectileRef.activeSelf)
+					{
+						data.mProjectileRef.SetActive(false);
+					}
 				}
 				
 				return Vector3.zero;
 			}
+			// throw hook
 			else
 			{
 				data.mProjectileRef.transform.position += (dir * mHookSpeed) * Time.deltaTime;
 				
-				//! hook checking
+				//! hook checks if any player target is near him
 				GameObject hookObj = GetNearestToTarget(data.mProjectileRef.transform.position, mHookRadius, mTargetLayer);
 				
 //				Debug.Log("hookVector.sqrMagnitude: " + hookVector.sqrMagnitude);
 //				Debug.Log("mHookMaxDistSqr: " + mHookMaxDistSqr);
 				
-				if(hookVector.sqrMagnitude >= mHookMaxDistSqr)data.mReverseHook = true;
-				if(hookObj == null)return Vector3.zero;
-				if(hookObj.layer == LayerMask.NameToLayer("Player"))
+				// if hook reach it's maximum length
+				if(hookVector.sqrMagnitude >= mHookMaxDistSqr)
 				{
-					data.mHookTarget = hookObj;
-					ApplyHookEffect(hookObj);
-					hookObj.transform.parent = data.mProjectileRef.transform;
 					data.mReverseHook = true;
 				}
+				// if hook misses
+				if(hookObj == null)
+				{
+					//Debug.Log("LOL");
+					return Vector3.zero;
+				}
+				
+				// if they hook obj is player
+				if(hookObj.layer == LayerMask.NameToLayer("Player"))
+				{
+					// assign the player reference to the hook reference
+					data.mHookTarget = hookObj;
+					// apply dmg and projectile
+					ApplyHookEffect(hookObj);
+					// set the player's parent as the projectile
+					hookObj.transform.parent = data.mProjectileRef.transform;
+					// reverse the hook
+					data.mReverseHook = true;
+				}
+				// if the hook obj is an environment
 				else if(hookObj.layer == LayerMask.NameToLayer("Environment"))
 				{
+					// reverse the hook
 					data.mReverseHook = true;
 				}
 			}

@@ -14,6 +14,9 @@ public class PathSearchBehaviour : BehaviourBase
 	float mMinDistSqr;
 	float mPathSearchDistSqr;
 	
+	public AnimationClip WalkAnimationClip;
+	public float WalkAnimationSpeed;
+	
 	public override void Init (EnemyBase enemyBase)
 	{
 		PathSearchBehaviourData data;
@@ -29,6 +32,8 @@ public class PathSearchBehaviour : BehaviourBase
 		data.mMemoryTimer = mMemoryDuration;
 		mMinDistSqr = mMinDist * mMinDist;
 		mPathSearchDistSqr = mPathSearchDist * mPathSearchDist;
+		
+		enemyBase.Animator.CrossFade(WalkAnimationClip,WrapMode.Loop, WalkAnimationSpeed);
 	}
 	
 	public override Vector3 UpdateBehaviour (EnemyBase enemyBase)

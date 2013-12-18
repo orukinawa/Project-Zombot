@@ -11,27 +11,27 @@ public class SpawnDictionary
 public class SpawnManager : MonoBehaviour 
 {
 	public SpawnDictionary[] mSpawnDictionary = new SpawnDictionary[0];
-	 
-	//! spawn enemy based on the given prefab
-	public void SpawnEnemy(GameObject prefab, Vector3 position, Quaternion rotation)
+	
+	public List<GameObject> StateMachines = new List<GameObject>();
+	
+	void Awake()
 	{
-		//! check for the state machine and spawn it
+		InitStateMachines();
+	}
+	
+	void InitStateMachines()
+	{
+		GameObject StateMachineObj = new GameObject("StateMachines");
 		for(int i = 0; i < mSpawnDictionary.Length; i++)
 		{
-			if(prefab == mSpawnDictionary[i].mEnemyPrefab)
-			{
-				//! spawn the mStateMachine
-				GameObject stateMachine = SpawnStateMachine(mSpawnDictionary[i].mStateMachine);
-				GameObject enemyObj =(GameObject)PoolManager.pools["Enemy Pool"].Spawn(prefab, position, rotation);
-				//! Spawn enemy with idle state
-				enemyObj.GetComponent<BehaviourManager>().mStartState = GetEnemyState("IDLE",stateMachine);
-				enemyObj.GetComponent<BehaviourManager>().mCurrentState = GetEnemyState("IDLE",stateMachine);
-			}
+			GameObject go = SpawnStateMachine(mSpawnDictionary[i].mStateMachine);
+			StateMachines.Add(go);
+			go.transform.parent = StateMachineObj.transform;
 		}
 	}
 	
-	//! spawn enemy with target given and state
-	public void SpawnEnemy(GameObject prefab, Vector3 position, Quaternion rotation, GameObject target, string state)
+	//! spawn enemy based on the given prefab
+	public GameObject SpawnEnemy(GameObject prefab, Vector3 position, Quaternion rotation)
 	{
 		//! check for the state machine and spawn it
 		for(int i = 0; i < mSpawnDictionary.Length; i++)
@@ -39,28 +39,72 @@ public class SpawnManager : MonoBehaviour
 			if(prefab == mSpawnDictionary[i].mEnemyPrefab)
 			{
 				//! spawn the mStateMachine
-				GameObject stateMachine = SpawnStateMachine(mSpawnDictionary[i].mStateMachine);
+				//GameObject stateMachine = SpawnStateMachine(mSpawnDictionary[i].mStateMachine);
+				
+				GameObject stateMachine = StateMachines[i];
+				GameObject enemyObj =(GameObject)PoolManager.pools["Enemy Pool"].Spawn(prefab, position, rotation);
+				//! Spawn enemy with idle state
+				BehaviourManager behaviourManager = enemyObj.GetComponent<BehaviourManager>();
+				behaviourManager.ResetStateMachine();
+				behaviourManager.mStartState = GetEnemyState("SPAWN",stateMachine);
+				behaviourManager.RequestState(Transition.MODE.PUSH,behaviourManager.mStartState);
+				
+				return enemyObj;
+			}
+		}
+		
+		Debug.LogWarning("[SpawnManager]Cannot spawnEnemy!!");
+		return null;
+	}
+	
+	//! spawn enemy with target given and state
+	public GameObject SpawnEnemy(GameObject prefab, Vector3 position, Quaternion rotation, GameObject target, string state)
+	{
+		//! check for the state machine and spawn it
+		for(int i = 0; i < mSpawnDictionary.Length; i++)
+		{
+			if(prefab == mSpawnDictionary[i].mEnemyPrefab)
+			{
+				//! spawn the mStateMachine
+				GameObject stateMachine =  StateMachines[i];
 				GameObject enemyObj =(GameObject)PoolManager.pools["Enemy Pool"].Spawn(prefab, position, rotation);
 				enemyObj.GetComponent<EnemyBase>().mTargetPlayer = target;
 				//! Spawn enemy with idle state
-				enemyObj.GetComponent<BehaviourManager>().mStartState = GetEnemyState(state,stateMachine);
-				enemyObj.GetComponent<BehaviourManager>().mCurrentState = GetEnemyState(state,stateMachine);
+				BehaviourManager behaviourManager = enemyObj.GetComponent<BehaviourManager>();
+				behaviourManager.ResetStateMachine();
+				behaviourManager.mStartState = GetEnemyState(state,stateMachine);
+				behaviourManager.RequestState(Transition.MODE.PUSH,behaviourManager.mStartState);
+				return enemyObj;
 			}
 		}
+		
+		Debug.LogWarning("[SpawnManager]Cannot spawnEnemy!!");
+		return null;
 	} 
 	
 	BehaviourState GetEnemyState(string stateName, GameObject stateMachine)
 	{
 		BehaviourState[] states = stateMachine.GetComponentsInChildren<BehaviourState>();
-		
+		BehaviourState defaultState = null;
+			
 		foreach(BehaviourState state in states)
 		{
+			// just cache the default state
+			if(state.mStateName == "SPAWN")
+			{
+				defaultState = state;
+			}
+			
 			if(stateName == state.mStateName)
 			{
 				return state;
 			}
 		}
-		return null;
+		
+		// if there isn't such request state found
+		Debug.LogWarning("No such state found for the particular spawn!");
+		
+		return defaultState;
 	}
 	
 	GameObject SpawnStateMachine(GameObject stateMachinePrefab)

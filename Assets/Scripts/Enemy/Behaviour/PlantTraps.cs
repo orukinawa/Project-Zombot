@@ -13,6 +13,9 @@ public class PlantTraps : BehaviourBase
 	public GameObject mTrapPrefab;
 	public float mPlantingDuration;
 	
+	public AnimationClip PlantingAnimation;
+	public float PlantingAnimationSpeed;
+	
 	public override void Init (EnemyBase enemyBase)
 	{
 		PlantTrapsData data;
@@ -40,6 +43,8 @@ public class PlantTraps : BehaviourBase
 		
 		data.mPlantingTimer += Time.deltaTime;
 		//! do planting animation here
+		
+		enemyBase.Animator.CrossFade(PlantingAnimation,WrapMode.Loop,PlantingAnimationSpeed);
 		
 		if(data.mPlantingTimer > mPlantingDuration)
 		{

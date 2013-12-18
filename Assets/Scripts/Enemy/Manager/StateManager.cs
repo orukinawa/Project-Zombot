@@ -11,8 +11,24 @@ abstract public class StateManager : MonoBehaviour
 	
 	void Start()
 	{
+		Init();
+	}
+	
+	protected virtual void Init()
+	{
+		//Debug.Log("Init state");
 		//! Initial a start state
 		RequestState(Transition.MODE.PUSH, mStartState);
+	}
+	
+	/// <summary>
+	/// Clears all the reference state
+	/// </summary>
+	public void ResetStateMachine()
+	{
+		//Debug.Log("reset state machine!");
+		mStateStack.Clear();
+		mCurrentState = null;
 	}
 	
 	/// <summary>

@@ -14,9 +14,10 @@ public class NeighbourInitialBlockLink
 
 public class InitialBlock
 {
+	// the main block
 	public GameObject mInitialBlockObj;
 	public List<NeighbourInitialBlockLink> mNeighbourBlock = new List<NeighbourInitialBlockLink>();
-	//! cache all generated block in this row/col boundary
+	// all his generated neighbour block in his region (row col)
 	public List<GameObject> mGeneratedBlock = new List<GameObject>();
 }
 
@@ -34,7 +35,7 @@ public class EnemySpawnManager
 	public int mTargetTalentPoint;
 	//! attach prefabs via inspector
 	public GameObject mEnemyPrefab;
-	//! checks whether it's added to the list
+	//! checks whether it's prepare to spawn this type of enemy if you reach it's talent bar point
 	public bool mAdded;
 }
 	
@@ -43,6 +44,7 @@ public class EventManager : MonoBehaviour
 {
 	//! list of monster allow in this scene(level)
 	public EnemySpawnManager[] mEnemySpawnManager;
+	//! current enemyType that would appear in result of the spawn
 	List<GameObject> mEnemyTypeList = new List<GameObject>();
 	
 	//! debugging purpose
@@ -58,8 +60,8 @@ public class EventManager : MonoBehaviour
 	float mCurrentTime = 0.0f;
 	
 	//! the wave spawning
-	public int mNumPerWave = 10;
-	int mSpawnedWave = 0;
+	public int mMaxNumPerWave = 10;
+	int mNumEnemy = 0;
 	//! in seconds
 	public float mWaveSpawnDuration = 60.0f;
 	float mWaveSpawnTimer = 0.0f;
@@ -67,9 +69,6 @@ public class EventManager : MonoBehaviour
 	
 	//! signal to tell the players have open the start door
 	public static bool mStartGame;
-	
-	public float mMaxDistSpawn;
-	float mMaxDistSpawnSqr;
 	
 	//! this is for a single player test
 	public GameObject mPlayerPrefab;
@@ -89,9 +88,8 @@ public class EventManager : MonoBehaviour
 	
 	void Start()
 	{
-		mMaxDistSpawnSqr = mMaxDistSpawn * mMaxDistSpawn;
 		sKillPts = mKillTalentPts;
-		mSpawnedWave = mNumPerWave;
+		mNumEnemy = mMaxNumPerWave;
 		//! update the first time
 		mUpdateTimer = 0.0f;
 		SpawnPlayers();
@@ -107,12 +105,17 @@ public class EventManager : MonoBehaviour
 				UpdateSpawnList();
 				mUpdateTimer = 1.0f;
 			}
+			// update talent time based on time progression
 			UpdTimeProgression();
+			// calculate to spawn the wave with aggro enemies
 			UpdWaveTimer();
+			// spawn non-agro enemies nearby
 			SpawnEnemies();
 		}
 	}
 	
+	// updates the talent point based on time progression
+	// meaning the longer you are in the battle the harder the game is
 	void UpdTimeProgression()
 	{
 		//! increse the difficulty of the game over time
@@ -127,24 +130,33 @@ public class EventManager : MonoBehaviour
 	void UpdWaveTimer()
 	{
 		mWaveSpawnTimer += Time.deltaTime;
+		// spawn the aggro enemy
 		if(mWaveSpawnTimer >= mWaveSpawnDuration)
 		{
+			// update the interval spawn
 			mSpawnDelayDuration -= Time.deltaTime;
 			if(mSpawnDelayDuration <= 0.0f)
 			{
+				// spawn an aggro enemy base on the region that the player is in
 				SpawnEnemyWave();
+				// reset the interval
 				mSpawnDelayDuration = 1.0f;
-				mSpawnedWave -= 1;
+				// update the num enemy to spawn counter
+				mNumEnemy -= 1;
 			}
 			
-			if(mSpawnedWave <= 0)
+			// if the nu enemy 
+			if(mNumEnemy <= 0)
 			{
+				// reset the wave spawn timer
 				mWaveSpawnTimer = 0.0f;
-				mSpawnedWave = mNumPerWave;
+				// reset the num enemy counter
+				mNumEnemy = mMaxNumPerWave;
 			}
 		}
 	}
 	
+	// spawn all the aggro enemy
 	public void SpawnEnemyWave()
 	{
 		int col = EventMap.sTileSize * EventMap.mMaxBoundary;
@@ -172,6 +184,7 @@ public class EventManager : MonoBehaviour
 	public void SpawnPlayers()
 	{
 		List<EventSpawnPlayer> mStartBlocks = new List<EventSpawnPlayer>();
+		
 		for(int i = 0; i < mEventMap.mCol; i++)
 		{
 			for(int j = 0; j < mEventMap.mRow; j++)
@@ -222,14 +235,17 @@ public class EventManager : MonoBehaviour
 	//! updates the spawn list for eventSpawnEnemies
 	public void UpdateSpawnList()
 	{
-		foreach(EnemySpawnManager evtManager in mEnemySpawnManager) 
+		foreach(EnemySpawnManager evtSpawnManager in mEnemySpawnManager) 
 		{
-			if(mTalentPoint >= evtManager.mTargetTalentPoint)	
+			// if spawnManager
+			if(!evtSpawnManager.mAdded)
 			{
-				if(!evtManager.mAdded)
+				// if talent point achieved
+				if(mTalentPoint >= evtSpawnManager.mTargetTalentPoint)	
 				{
-					evtManager.mAdded = true;
-					mEnemyTypeList.Add(evtManager.mEnemyPrefab);
+					// update new enemy
+					evtSpawnManager.mAdded = true;
+					mEnemyTypeList.Add(evtSpawnManager.mEnemyPrefab);
 				}
 			}
 		}
@@ -368,11 +384,11 @@ public class EventManager : MonoBehaviour
 		GUI.Label(new Rect(300,60,200,50),"WaveTimer: " + mWaveSpawnTimer);
 	}
 	
-	void OnDrawGizmos()
-	{
-		if(mDrawInitialBlockMap)
-		{
-			DrawInitialBlockMap();
-		}
-	}
+//	void OnDrawGizmos()
+//	{
+////		if(mDrawInitialBlockMap)
+////		{
+////			DrawInitialBlockMap();
+////		}
+//	}
 }
