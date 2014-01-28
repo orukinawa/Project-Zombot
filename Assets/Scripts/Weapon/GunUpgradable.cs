@@ -135,7 +135,7 @@ public class GunUpgradable : GunBase
 			{
 				wavesFired = 0;
 				waveBurstIntervalTimer = waveBurstInterval*2;
-				--currMagazineSize;
+				//--currMagazineSize;
 				fireRateTimer = 0.0f;
 				canShoot = false;
 				isShooting = false;				

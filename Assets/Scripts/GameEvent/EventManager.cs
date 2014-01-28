@@ -391,11 +391,11 @@ public class EventManager : MonoBehaviour
 		
 	}
 	
-	void OnGUI()
-	{
-		GUI.Label(new Rect(300,0,200,50),"TalentPts: " + mTalentPoint);
-		GUI.Label(new Rect(300,60,200,50),"WaveTimer: " + mWaveSpawnTimer);
-	}
+//	void OnGUI()
+//	{
+//		GUI.Label(new Rect(300,0,200,50),"TalentPts: " + mTalentPoint);
+//		GUI.Label(new Rect(300,60,200,50),"WaveTimer: " + mWaveSpawnTimer);
+//	}
 	
 //	void OnDrawGizmos()
 //	{

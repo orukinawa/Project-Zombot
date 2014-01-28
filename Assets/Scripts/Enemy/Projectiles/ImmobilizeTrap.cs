@@ -9,6 +9,7 @@ public class ImmobilizeTrap : TrapBase
 	float mTrapTimer;
 	GameObject mTrapPlayer;
 	public GameObject mTrapEffect;
+	float timeDestroy = 0.0f;
 	
 	protected override void SelfDestruct()
 	{
@@ -86,5 +87,13 @@ public class ImmobilizeTrap : TrapBase
 				}
 			}
 		}
+//		else
+//		{
+//			timeDestroy += Time.deltaTime;
+//			if(timeDestroy > 5.0f)
+//			{
+//				SelfDestruct();
+//			}
+//		}
 	}
 }

@@ -69,7 +69,7 @@ public class EventSpawnEnemies : MonoBehaviour
 		//! do spawn here
 		if(mEnemyListPrefab.Count > 1)
 		{
-			rand = Random.Range(0,2);
+			rand = Random.Range(0,mEnemyListPrefab.Count);
 		}
 		float colliderRad = mEnemyListPrefab[rand].GetComponent<CharacterController>().radius;
 		

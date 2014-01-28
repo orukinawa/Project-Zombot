@@ -18,6 +18,10 @@ public class DoorAuto : DoorBase
 				OpenDoor(doorType);
 				mOpenType = doorType;
 				mDoorState = DoorBase.DOOR_STATE.OPEN;
+				if(!EventManager.mStartGame)
+				{
+					EventManager.mStartGame = true;
+				}
 			}
 		}
 	}

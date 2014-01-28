@@ -1457,57 +1457,57 @@ public class EventMap : MonoBehaviour
 		}
 	}
 	
-	void OnGUI()
-	{
-		mDrawLevelNodes = GUI.Toggle(new Rect(0,0,300,50),mDrawLevelNodes,"Draw Level Nodes");
-		mDrawPathFindingLink = GUI.Toggle(new Rect(0,50,300,50),mDrawPathFindingLink,"Draw linkage between initial block");
-		mDrawBigAiNodes = GUI.Toggle(new Rect(0,100,300,50),mDrawBigAiNodes,"Draw Big Ai Nodes");
-		mDrawSmallAiNodes = GUI.Toggle(new Rect(0,150,300,50),mDrawSmallAiNodes,"Draw Small Ai Nodes");
-		EventManager.mDrawInitialBlockMap = GUI.Toggle(new Rect(0,200,300,50),EventManager.mDrawInitialBlockMap,"Draw the event manager map");
-	}
-	
-	void OnDrawGizmos()
-	{
-		if(mNodes.Length <= 0)
-		{
-			return;
-		}
-		
-		if(mDrawLevelNodes)
-		{
-			DrawLevelNodes();
-		}
-		if(mDrawPathFindingLink)
-		{
-			DrawPathfindingLink();
-		}
-		if(mDrawBigAiNodes)
-		{
-			DrawBigAiNodes();
-		}
-		if(mDrawSmallAiNodes)
-		{
-			DrawSmallAiNodes();
-		}
-		
-		//! check the node linkage
-//		foreach(NodeLink nodeLink in mNodes[4,4].mNodeLinkNeighbour)
+//	void OnGUI()
+//	{
+//		mDrawLevelNodes = GUI.Toggle(new Rect(0,0,300,50),mDrawLevelNodes,"Draw Level Nodes");
+//		mDrawPathFindingLink = GUI.Toggle(new Rect(0,50,300,50),mDrawPathFindingLink,"Draw linkage between initial block");
+//		mDrawBigAiNodes = GUI.Toggle(new Rect(0,100,300,50),mDrawBigAiNodes,"Draw Big Ai Nodes");
+//		mDrawSmallAiNodes = GUI.Toggle(new Rect(0,150,300,50),mDrawSmallAiNodes,"Draw Small Ai Nodes");
+//		EventManager.mDrawInitialBlockMap = GUI.Toggle(new Rect(0,200,300,50),EventManager.mDrawInitialBlockMap,"Draw the event manager map");
+//	}
+//	
+//	void OnDrawGizmos()
+//	{
+//		if(mNodes.Length <= 0)
 //		{
-//				Node neighbour = mNodes[nodeLink.neighbourCol,nodeLink.neighbourRow];
-//				Gizmos.DrawLine(mNodes[4,4].mPoint, neighbour.mPoint);
+//			return;
 //		}
-		
-		
-		
-		
-		//Gizmos.color = Color.green;
-		
-		//! draw the pathLinks
-//		foreach(PathLink pathLinks in mPathLinks)
+//		
+//		if(mDrawLevelNodes)
 //		{
-//			Gizmos.DrawIcon(pathLinks.mStart,"LevelRelated/Start_Icon");
-//			Gizmos.DrawIcon(pathLinks.mGoal,"LevelRelated/BullEye_Icon");
-//			Gizmos.DrawLine(pathLinks.mStart, pathLinks.mGoal);
+//			DrawLevelNodes();
 //		}
-	}
+//		if(mDrawPathFindingLink)
+//		{
+//			DrawPathfindingLink();
+//		}
+//		if(mDrawBigAiNodes)
+//		{
+//			DrawBigAiNodes();
+//		}
+//		if(mDrawSmallAiNodes)
+//		{
+//			DrawSmallAiNodes();
+//		}
+//		
+//		//! check the node linkage
+////		foreach(NodeLink nodeLink in mNodes[4,4].mNodeLinkNeighbour)
+////		{
+////				Node neighbour = mNodes[nodeLink.neighbourCol,nodeLink.neighbourRow];
+////				Gizmos.DrawLine(mNodes[4,4].mPoint, neighbour.mPoint);
+////		}
+//		
+//		
+//		
+//		
+//		//Gizmos.color = Color.green;
+//		
+//		//! draw the pathLinks
+////		foreach(PathLink pathLinks in mPathLinks)
+////		{
+////			Gizmos.DrawIcon(pathLinks.mStart,"LevelRelated/Start_Icon");
+////			Gizmos.DrawIcon(pathLinks.mGoal,"LevelRelated/BullEye_Icon");
+////			Gizmos.DrawLine(pathLinks.mStart, pathLinks.mGoal);
+////		}
+//	}
 }

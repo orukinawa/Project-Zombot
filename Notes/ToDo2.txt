@@ -58,13 +58,11 @@
 IMPORTANT
 ===========
 - Spawning whole everthing
-- Enemy last hit
-- collider offset weapon z
-- intro scene
+- Enemy last hit- SCRAP
+- collider offset weapon z //DONE
+- intro scene //DONE
 - NGUI
 - SOUNDS
-- ghost immbolize needs trap mesh
-
 
 // todo
 - change size of enemies to fit the theme

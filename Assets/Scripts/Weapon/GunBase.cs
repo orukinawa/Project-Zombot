@@ -96,7 +96,7 @@ public class GunBase : MonoBehaviour
 				// TODO: add logic to tell bullet if pool manager was used
 				//bullet = null;
 				//effect = null;
-				--currMagazineSize;
+				//--currMagazineSize;
 				fireRateTimer = 0.0f;
 				canShoot = false;
 			}
@@ -198,19 +198,19 @@ public class GunBase : MonoBehaviour
 		bulletSpeed = bulletSpeedBase * (mBulletBase.speedModifierPercent/100.0f) * (currentEffect.speedModifierPercent/100.0f);
 	}
 	
-	void OnGUI()
-	{		
-		GUILayout.BeginHorizontal();
-		GUILayout.Space(20f);
-		GUILayout.BeginVertical();
-		GUILayout.Space(250f);
-		if(isReloading)
-		{
-			GUILayout.Label("Bullets: Reloading..." + (reloadRate-reloadRateTimer).ToString("0.00"));
-			return;
-		}
-		GUILayout.Label("Bullets: " + currMagazineSize + " / " + maxMagazineSize);
-		GUILayout.EndVertical();
-		GUILayout.EndHorizontal();
-	}
+//	void OnGUI()
+//	{		
+//		GUILayout.BeginHorizontal();
+//		GUILayout.Space(20f);
+//		GUILayout.BeginVertical();
+//		GUILayout.Space(250f);
+//		if(isReloading)
+//		{
+//			GUILayout.Label("Bullets: Reloading..." + (reloadRate-reloadRateTimer).ToString("0.00"));
+//			return;
+//		}
+//		GUILayout.Label("Bullets: " + currMagazineSize + " / " + maxMagazineSize);
+//		GUILayout.EndVertical();
+//		GUILayout.EndHorizontal();
+//	}
 }
